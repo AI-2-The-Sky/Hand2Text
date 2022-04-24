@@ -2,19 +2,18 @@ from typing import Any, List
 
 import torch
 from pytorch_lightning import LightningModule
+from torch.utils.data import DataLoader
 from torchmetrics import MaxMetric
 from torchmetrics.classification.accuracy import Accuracy
 from torchtext.data.metrics import bleu_score
-
 from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
 
 from src.models.components.basic import BasicModel
 
 
 class BasicLitModule(LightningModule):
-    """
-    A LightningModule organizes your PyTorch code into 5 sections:
+    """A LightningModule organizes your PyTorch code into 5 sections:
+
         - Computations (init).
         - Train loop (training_step)
         - Validation loop (validation_step)
@@ -125,14 +124,14 @@ class BasicLitModule(LightningModule):
 
 
 if __name__ == "__main__":
-    
+
     # Transform each image into tensor
     transform = transforms.Compose([transforms.ToTensor()])
-    test_data = datasets.FashionMNIST('~/data', train=False, download=True, transform=transform)
+    test_data = datasets.FashionMNIST("~/data", train=False, download=True, transform=transform)
     test_dataloader = DataLoader(test_data, batch_size=64)
 
     model = BasicModel()
-    
+
     for X, y in test_dataloader:
         pred = model.forward(X)
         print(pred)

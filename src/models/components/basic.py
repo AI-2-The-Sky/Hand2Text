@@ -1,10 +1,11 @@
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-from torch import nn
 from random_word import RandomWords
+from torch import nn
 
-class BasicModel():
+
+class BasicModel:
     def __init__(
         self,
         channels: int = 3,

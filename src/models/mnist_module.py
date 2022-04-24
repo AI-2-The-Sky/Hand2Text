@@ -109,8 +109,9 @@ class MNISTLitModule(LightningModule):
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True)
 
         # ============================
-        # acc = self.val_bleuscore.compute()  # get val bleuscore from current epoch
-        # self.val_bleuscore.update(acc)
+        # loss, preds, targets = self.step(batch)
+        # bleuscore = self.val_bleuscore.compute(preds, targets)  # get val bleuscore from current epoch
+        # self.val_bleuscore.update(bleuscore)
 
     def test_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)

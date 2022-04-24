@@ -12,10 +12,10 @@ class BleuScore(Metric):
 
     def update(
         self,
-        candidate_corpus: list[list[str]],
-        references_corpus: list[list[str]],
-        max_n: int = 4,
-        weights: list[float] = [0.0, 1.0, 0.0, 0.0],
+        candidate_corpus,
+        references_corpus,
+        max_n = 4,
+        weights = [0.0, 1.0, 0.0, 0.0]
     ):
         self.candidate_corpus = candidate_corpus
         self.reference_corpus = references_corpus

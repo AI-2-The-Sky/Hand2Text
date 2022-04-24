@@ -1,4 +1,43 @@
 # --------------------------- #
+#         Development         #
+# --------------------------- #
+
+# --------- data --------- #
+#dvc[s3]
+botocore>=1.23.24,<1.23.25
+awscli>=1.22.24,<1.22.25
+boto3>=1.20.24,<1.20.25
+s3fs>=2021.11.1
+dvc==2.9.5
+
+
+# --------- loggers --------- #
+# wandb
+# neptune-client
+mlflow
+#mlflow>=1.1.0
+# comet-ml
+# tensorboard
+
+
+# --------- linters --------- #
+pre-commit      # hooks for applying linters on commit
+click==8.0.4
+black           # code formatting
+isort           # import sorting
+flake8          # code analysis
+nbstripout      # remove output from jupyter notebooks
+pre-commit
+
+# --------- others --------- #
+python-dotenv   # loading env variables from .env file
+rich            # beautiful text formatting in terminal
+sh              # for running bash commands in some tests
+pytest          # tests
+pudb            # debugger
+
+
+# --------------------------- #
 #           project           #
 # --------------------------- #
 
@@ -23,39 +62,3 @@ pandas
 # --------- inference --------- #
 # fastapi
 # uvicorn
-
-
-# --------------------------- #
-#         Development         #
-# --------------------------- #
-
-
-# --------- loggers --------- #
-# wandb
-# neptune-client
-mlflow
-#mlflow>=1.1.0
-# comet-ml
-# tensorboard
-
-# --------- data --------- #
-#awscli
-#dvc[s3]
-dvc["s3"]=="^2.9.5"
-boto3=="^1.19.8"
-
-# --------- linters --------- #
-pre-commit      # hooks for applying linters on commit
-click==8.0.4
-black           # code formatting
-isort           # import sorting
-flake8          # code analysis
-nbstripout      # remove output from jupyter notebooks
-pre-commit
-
-# --------- others --------- #
-python-dotenv   # loading env variables from .env file
-rich            # beautiful text formatting in terminal
-sh              # for running bash commands in some tests
-pytest          # tests
-pudb            # debugger

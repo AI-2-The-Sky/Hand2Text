@@ -1,0 +1,4 @@
+_target_: src.models.components.basic.BasicModel
+width: 32
+height: 32
+channels: 3

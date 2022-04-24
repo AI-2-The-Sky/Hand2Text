@@ -1,0 +1,6 @@
+_target_: src.models.basic_module.BasicLitModule
+lr: 0.001
+weight_decay: 0.0005
+
+defaults:
+  - net: basic

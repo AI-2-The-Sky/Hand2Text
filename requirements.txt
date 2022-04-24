@@ -39,7 +39,7 @@ mlflow
 
 # --------- data --------- #
 awscli
-dvc
+dvc[s3]
 
 # --------- linters --------- #
 pre-commit      # hooks for applying linters on commit

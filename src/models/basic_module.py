@@ -2,13 +2,9 @@ from typing import Any, List
 
 import torch
 from pytorch_lightning import LightningModule
-from torch.utils.data import DataLoader
 from torchmetrics import MaxMetric
-from torchmetrics.classification.accuracy import Accuracy
-from torchtext.data.metrics import bleu_score
-from torchvision import datasets, transforms
 
-from src.models.components.basic import BasicModel
+from src.models.components.BlueScore import BleuScore
 
 
 class BasicLitModule(LightningModule):
@@ -26,7 +22,7 @@ class BasicLitModule(LightningModule):
 
     def __init__(
         self,
-        net: BasicModel,
+        net: torch.nn.Module,
         lr: float = 0.001,
         weight_decay: float = 0.0005,
     ):
@@ -43,27 +39,28 @@ class BasicLitModule(LightningModule):
 
         # use separate metric instance for train, val and test step
         # to ensure a proper reduction over the epoch
-        self.train_acc = bleu_score
-        self.val_acc = bleu_score
-        self.test_acc = bleu_score
+        self.train_acc = BleuScore()
+        self.val_acc = BleuScore()
+        self.test_acc = BleuScore()
 
         # for logging best so far validation accuracy
         self.val_acc_best = MaxMetric()
 
     def forward(self, x: torch.Tensor):
-        return self.net.forward(x)
+        return self.net(x)
 
     def step(self, batch: Any):
         x, y = batch
-        preds = self.forward(x)
-        loss = self.criterion(preds, y)
+        logits = self.forward(x)
+        loss = self.criterion(logits, y)
+        preds = torch.argmax(logits, dim=1)
         return loss, preds, y
 
     def training_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
 
         # log train metrics
-        acc = self.train_acc(preds, targets)
+        acc = self.train_acc(self.net.to_str(preds), self.net.to_str(targets))
         self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
 
@@ -80,7 +77,7 @@ class BasicLitModule(LightningModule):
         loss, preds, targets = self.step(batch)
 
         # log val metrics
-        acc = self.val_acc(preds, targets)
+        acc = self.val_acc(self.net.to_str(preds), self.net.to_str(targets))
         self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
 
@@ -95,7 +92,7 @@ class BasicLitModule(LightningModule):
         loss, preds, targets = self.step(batch)
 
         # log test metrics
-        acc = self.test_acc(preds, targets)
+        acc = self.test_acc(self.net.to_str(preds), self.net.to_str(targets))
         self.log("test/loss", loss, on_step=False, on_epoch=True)
         self.log("test/acc", acc, on_step=False, on_epoch=True)
 
@@ -117,21 +114,6 @@ class BasicLitModule(LightningModule):
         See examples here:
             https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html#configure-optimizers
         """
-        # return torch.optim.Adam(
-        #     params=self.parameters(), lr=self.hparams.lr, weight_decay=self.hparams.weight_decay
-        # )
-        return
-
-
-if __name__ == "__main__":
-
-    # Transform each image into tensor
-    transform = transforms.Compose([transforms.ToTensor()])
-    test_data = datasets.FashionMNIST("~/data", train=False, download=True, transform=transform)
-    test_dataloader = DataLoader(test_data, batch_size=64)
-
-    model = BasicModel()
-
-    for X, y in test_dataloader:
-        pred = model.forward(X)
-        print(pred)
+        return torch.optim.Adam(
+            params=self.parameters(), lr=self.hparams.lr, weight_decay=self.hparams.weight_decay
+        )

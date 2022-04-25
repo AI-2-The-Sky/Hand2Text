@@ -1,4 +1,5 @@
 _target_: src.models.components.basic.BasicModel
-width: 32
-height: 32
-channels: 3
+width: 28
+height: 28
+channels: 1
+corpus: "/usr/share/dict/words"

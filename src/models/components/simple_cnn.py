@@ -5,14 +5,21 @@ from torch import nn
 from torchvision import datasets, transforms
 
 
-def first_dense_arg(channels, width, height, kernel_size):
-    x = torch.randn(channels, width, height)
-    conv1 = nn.Conv2d(channels, channels * 2, kernel_size)
-    pool = nn.MaxPool2d(2, 2)
-    conv2 = nn.Conv2d(channels * 2, channels * 4, kernel_size)
-    x = pool(F.relu(conv1(x)))
-    x = pool(F.relu(conv2(x)))
-    return x.shape[0] * x.shape[1] * x.shape[2]
+def get_conv_shape(shape, kernel_size):
+    return (shape[0] * 2, (shape[1] - (kernel_size - 1)), (shape[1] - (kernel_size - 1)))
+
+
+def get_pool_shape(shape):
+    return (shape[0], shape[1] / 2, shape[2] / 2)
+
+
+def dense_arg(channels, width, height, kernel_size):
+    x = (channels, width, height)
+    x = get_conv_shape(x, kernel_size)
+    x = get_pool_shape(x)
+    x = get_conv_shape(x, kernel_size)
+    x = get_pool_shape(x)
+    return int(x[0] * x[1] * x[2])
 
 
 class SimpleCNNModel(nn.Module):
@@ -38,7 +45,7 @@ class SimpleCNNModel(nn.Module):
         self.conv2 = nn.Conv2d(self.channels * 2, self.channels * 4, kernel_size)
 
         self.fc1 = nn.Linear(
-            first_dense_arg(self.channels, self.width, self.height, self.kernel_size), 120
+            dense_arg(self.channels, self.width, self.height, self.kernel_size), 120
         )
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, self.n)

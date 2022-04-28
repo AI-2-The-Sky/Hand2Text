@@ -1,13 +1,16 @@
-import cv2, os
+import os
+
+import cv2
+
 
 def get_frame_from_video(filepath, name_file):
     vid = cv2.VideoCapture(filepath)
     current_frame = 0
     name_dir = name_file[0:5]
 
-    while (True):
+    while True:
         success, frame = vid.read()
-        if (success and current_frame % 25 == 0 and current_frame != 0):
+        if success and current_frame % 25 == 0 and current_frame != 0:
             full_filepath = "./frame/" + name_dir + "/frame" + str(current_frame) + ".jpg"
             cv2.imwrite("./frame/" + name_dir + "/frame" + str(current_frame) + ".jpg", frame)
         current_frame += 1
@@ -17,6 +20,7 @@ def get_frame_from_video(filepath, name_file):
     vid.release()
     cv2.destroyAllWindows()
     return
+
 
 compt = 0
 all_file = os.listdir("./data/raw_videos/")

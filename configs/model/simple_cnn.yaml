@@ -1,0 +1,6 @@
+_target_: src.models.simple_cnn_module.SimpleCNNModule
+lr: 0.001
+weight_decay: 0.0005
+
+defaults:
+  - net: simple_cnn

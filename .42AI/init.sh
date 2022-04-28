@@ -18,7 +18,7 @@ CONDA_ENV=${PWD##*/}
 RAW_BUCKET_NAME=echo "$CONDA_ENV" | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]'
 BUCKET_NAME="hand2text"
 DVC_REMOTE="s3://$BUCKET_NAME/storage"
-AWS_PROFILE=42ai-$BUCKET_NAME
+AWS_PROFILE="42ai-$BUCKET_NAME"
 
 ############################################################
 # Help                                                     #

@@ -1,8 +1,38 @@
+import json
 import os
+from typing import Dict, List, Literal
 
 import cv2
 
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
+JSON_PATH = f"{ROOT_DIR}/data/H2T/WLASL_v0.3.json"
+
+
+class VideoMetadata:
+    split_count = {"train": 0, "test": 0, "val": 0}
+
+    def __init__(
+        self, label: str, bbox: List[int], fps: int, split: Literal["train", "test", "val"]
+    ):
+        self.label = label
+        self.bbox = bbox
+        self.fps = fps
+        self.split = split
+        VideoMetadata.split_count[split] += 1
+
+
+def load_labels() -> Dict[str, VideoMetadata]:
+    with open(JSON_PATH) as ipf:
+        json_data = json.load(ipf)
+
+    videos_labels: Dict[str, VideoMetadata] = {}
+    for ent in json_data:
+        gloss = ent["gloss"]
+        for inst in ent["instances"]:
+            videos_labels[inst["video_id"]] = VideoMetadata(
+                gloss, inst["bbox"], inst["fps"], inst["split"]
+            )
+    return videos_labels
 
 
 def get_frame_from_video(filepath: str, frame_subdir: str):
@@ -29,6 +59,7 @@ def main():
     RAW_VIDEOS_PATH = f"{SUB_DIR}/raw_videos"
     all_file = os.listdir(RAW_VIDEOS_PATH)
     len_all_file = len(all_file)
+    labels = load_labels()
 
     if not os.path.exists(FRAMES_DIR):
         os.makedirs(FRAMES_DIR)

@@ -169,3 +169,4 @@ outputs
 /data/MNIST
 /data/external
 /data/interim
+/data/H2T

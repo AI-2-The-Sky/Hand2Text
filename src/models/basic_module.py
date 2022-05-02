@@ -60,7 +60,9 @@ class BasicLitModule(LightningModule):
         loss, preds, targets = self.step(batch)
 
         # log train metrics
-        acc = self.train_acc(self.net.to_str(preds), self.net.to_str(targets))
+        # print(self.net.to_str(preds))
+        # print([self.net.to_str(targets)])
+        acc = self.train_acc(self.net.to_str(preds), [[x] for x in self.net.to_str(targets)])
         self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
 
@@ -77,7 +79,7 @@ class BasicLitModule(LightningModule):
         loss, preds, targets = self.step(batch)
 
         # log val metrics
-        acc = self.val_acc(self.net.to_str(preds), self.net.to_str(targets))
+        acc = self.val_acc(self.net.to_str(preds), [[x] for x in self.net.to_str(targets)])
         self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
 
@@ -92,7 +94,7 @@ class BasicLitModule(LightningModule):
         loss, preds, targets = self.step(batch)
 
         # log test metrics
-        acc = self.test_acc(self.net.to_str(preds), self.net.to_str(targets))
+        acc = self.test_acc(self.net.to_str(preds), [[x] for x in self.net.to_str(targets)])
         self.log("test/loss", loss, on_step=False, on_epoch=True)
         self.log("test/acc", acc, on_step=False, on_epoch=True)
 

@@ -1,4 +1,4 @@
-from models.components.BlueScore import BleuScore
+from src.models.components.BlueScore import BleuScore
 
 
 def tokenize(strlist: list):

@@ -1,0 +1,6 @@
+_target_: src.models.components.simple_cnn.SimpleCNNModel
+width: 28
+height: 28
+channels: 1
+kernel_size: 5
+corpus: "/usr/share/dict/words"

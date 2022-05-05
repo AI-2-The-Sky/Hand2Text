@@ -166,6 +166,9 @@ outputs
 /data/processed
 /data/results
 /data/raw
+/data/raw_videos
 /data/MNIST
 /data/external
 /data/interim
+/data/H2T/*
+!/data/H2T/*.dvc

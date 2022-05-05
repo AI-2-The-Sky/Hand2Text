@@ -3,18 +3,13 @@ from typing import Any, List
 import torch
 from pytorch_lightning import LightningModule
 from torchmetrics import MaxMetric
-from torchmetrics.classification.accuracy import Accuracy
 
-# from src.models.components.simple_dense_net import SimpleDenseNet
-
-# ============================
-# from src.models.components.BleuScore import BleuScore
+from src.models.components.BlueScore import BleuScore
 
 
-class MNISTLitModule(LightningModule):
-    """Example of LightningModule for MNIST classification.
+class BasicLitModule(LightningModule):
+    """A LightningModule organizes your PyTorch code into 5 sections:
 
-    A LightningModule organizes your PyTorch code into 5 sections:
         - Computations (init).
         - Train loop (training_step)
         - Validation loop (validation_step)
@@ -44,14 +39,9 @@ class MNISTLitModule(LightningModule):
 
         # use separate metric instance for train, val and test step
         # to ensure a proper reduction over the epoch
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
-        self.test_acc = Accuracy()
-
-        # ============================
-        # self.train_bleuscore = BleuScore()
-        # self.val_bleuscore = BleuScore()
-        # self.test_bleuscore = BleuScore()
+        self.train_acc = BleuScore()
+        self.val_acc = BleuScore()
+        self.test_acc = BleuScore()
 
         # for logging best so far validation accuracy
         self.val_acc_best = MaxMetric()
@@ -70,14 +60,11 @@ class MNISTLitModule(LightningModule):
         loss, preds, targets = self.step(batch)
 
         # log train metrics
-        acc = self.train_acc(preds, targets)
+        # print(self.net.to_str(preds))
+        # print([self.net.to_str(targets)])
+        acc = self.train_acc(self.net.to_str(preds), [[x] for x in self.net.to_str(targets)])
         self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
-
-        # ============================
-        # bleuscore = self.train_bleuscore(preds, targets)
-        # self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        # self.log("train/bleuscore", bleuscore, on_step=False, on_epoch=True, prog_bar=True)
 
         # we can return here dict with any tensors
         # and then read it in some callback or in `training_epoch_end()`` below
@@ -92,14 +79,9 @@ class MNISTLitModule(LightningModule):
         loss, preds, targets = self.step(batch)
 
         # log val metrics
-        acc = self.val_acc(preds, targets)
+        acc = self.val_acc(self.net.to_str(preds), [[x] for x in self.net.to_str(targets)])
         self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
-
-        # ============================
-        # bleuscore = self.val_bleuscore(preds, targets)
-        # self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        # self.log("val/bleuscore", bleuscore, on_step=False, on_epoch=True, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
 
@@ -108,23 +90,13 @@ class MNISTLitModule(LightningModule):
         self.val_acc_best.update(acc)
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True)
 
-        # ============================
-        # loss, preds, targets = self.step(batch)
-        # bleuscore = self.val_bleuscore.compute(preds, targets)  # get val bleuscore from current epoch
-        # self.val_bleuscore.update(bleuscore)
-
     def test_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
 
         # log test metrics
-        acc = self.test_acc(preds, targets)
+        acc = self.test_acc(self.net.to_str(preds), [[x] for x in self.net.to_str(targets)])
         self.log("test/loss", loss, on_step=False, on_epoch=True)
         self.log("test/acc", acc, on_step=False, on_epoch=True)
-
-        # ============================
-        # bleuscore = self.train_bleuscore(preds, targets)
-        # self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        # self.log("train/bleuscore", bleuscore, on_step=False, on_epoch=True, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
 
@@ -136,11 +108,6 @@ class MNISTLitModule(LightningModule):
         self.train_acc.reset()
         self.test_acc.reset()
         self.val_acc.reset()
-
-        # ============================
-        # self.train_bleuscore.reset()
-        # self.test_bleuscore.reset()
-        # self.val_bleuscore.reset()
 
     def configure_optimizers(self):
         """Choose what optimizers and learning-rate schedulers to use in your optimization.

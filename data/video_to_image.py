@@ -89,7 +89,7 @@ def get_frame_from_video(
     return video_frames
 
 
-def main():
+def load_dataset():
     SUB_DIR = f"{ROOT_DIR}/data/H2T"
     FRAMES_DIR = f"{SUB_DIR}/frames"
     RAW_VIDEOS_PATH = f"{SUB_DIR}/raw_videos"
@@ -111,7 +111,3 @@ def main():
             f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name]
         )
         data.extend(frames)
-
-
-if __name__ == "__main__":
-    main()

@@ -112,6 +112,10 @@ def load_dataset():
 
     if not os.path.exists(FRAMES_DIR):
         os.makedirs(FRAMES_DIR)
+
+    if not os.path.exists(f"{SUB_DIR}/wlasl_words"):
+        with open(f"{SUB_DIR}/wlasl_words", "w") as words_file:
+            words_file.write("\n".join(words))
     for i, file in enumerate(all_file, 1):
         video_name = file.split(".")[0]
         frame_subdir = f"{FRAMES_DIR}/{video_name}"

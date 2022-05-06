@@ -101,7 +101,17 @@ def get_frame_from_video(
     return video_frames
 
 
-def load_dataset(download: bool = False):
+def load_dataset(download: bool = False) -> Tuple[List[FrameMetaData], List[str]]:
+    """Returns the dataset with metadata, and the word-labels as a list.
+
+    Args:
+        download (bool, optional): Has to cut missing frames. Defaults to False.
+
+    Returns:
+        Tuple[List[FrameMetaData], List[str]]:
+            [0]: Dataset
+            [1]: List of words, dataset's label being word's index
+    """
     SUB_DIR = f"{ROOT_DIR}/data/H2T"
     FRAMES_DIR = f"{SUB_DIR}/frames"
     RAW_VIDEOS_PATH = f"{SUB_DIR}/raw_videos"
@@ -127,3 +137,4 @@ def load_dataset(download: bool = False):
             f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name], download
         )
         data.extend(frames)
+    return (data, words)

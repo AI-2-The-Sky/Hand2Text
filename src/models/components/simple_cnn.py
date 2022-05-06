@@ -38,7 +38,7 @@ class SimpleCNNModel(nn.Module):
         self.height = height
         self.kernel_size = kernel_size
         self.corpus = np.array(open(corpus).read().splitlines())
-        self.n = 10
+        self.n = len(self.corpus)
 
         self.conv1 = nn.Conv2d(self.channels, self.channels * 2, kernel_size)
         self.pool = nn.MaxPool2d(2, 2)

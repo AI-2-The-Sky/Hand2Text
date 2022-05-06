@@ -35,7 +35,6 @@ class Hand2TextDataModule(LightningDataModule):
         Do not use it to assign state (self.x = y).
         """
         # Cut video to images
-        # dvc pull ??
         load_dataset()
 
     def setup(self, stage: Optional[str] = None) -> None:
@@ -48,7 +47,9 @@ class Hand2TextDataModule(LightningDataModule):
         """
 
         # Load dataset
-        dataset = load_dataset()
+        dataset, words = load_dataset()
+
+        self.words = words
 
         # Assign train/val split(s) for use in Dataloaders
         if stage in (None, "fit"):

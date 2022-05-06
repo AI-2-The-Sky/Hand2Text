@@ -13,7 +13,7 @@ class VideoMetadata:
     split_count = {"train": 0, "test": 0, "val": 0}
 
     def __init__(
-        self, label: str, bbox: List[int], fps: int, split: Literal["train", "test", "val"]
+        self, label: int, bbox: List[int], fps: int, split: Literal["train", "test", "val"]
     ):
         self.label = label
         self.bbox = bbox
@@ -23,21 +23,33 @@ class VideoMetadata:
 
 
 FrameMetaData = Tuple[ndarray, VideoMetadata]
-FrameData = Tuple[ndarray, str]
+FrameData = Tuple[ndarray, int]
 
 
-def load_labels() -> Dict[str, VideoMetadata]:
+def load_labels() -> Tuple[Dict[str, VideoMetadata], List[str]]:
+    """Returns labels.
+
+    Returns:
+        Tuple[Dict[str, VideoMetadata], List[str]]:
+            [0]: dict[video_name, metadata]
+            [1]: list where label index correspond to a word
+    """
     with open(JSON_PATH) as ipf:
         json_data = json.load(ipf)
 
     videos_labels: Dict[str, VideoMetadata] = {}
+    words: List[str] = []
+    label = -1
     for ent in json_data:
-        gloss = ent["gloss"]
+        word = ent["gloss"]
+        label += 1
+        words.append(word)
+
         for inst in ent["instances"]:
             videos_labels[inst["video_id"]] = VideoMetadata(
-                gloss, inst["bbox"], inst["fps"], inst["split"]
+                label, inst["bbox"], inst["fps"], inst["split"]
             )
-    return videos_labels
+    return (videos_labels, words)
 
 
 def frame_meta_to_label(frames: List[FrameMetaData]) -> List[FrameData]:
@@ -95,11 +107,15 @@ def load_dataset():
     RAW_VIDEOS_PATH = f"{SUB_DIR}/raw_videos"
     all_file = os.listdir(RAW_VIDEOS_PATH)
     len_all_file = len(all_file)
-    labels: Dict[str, VideoMetadata] = load_labels()
+    labels, words = load_labels()
     data: List[FrameMetaData] = []
 
     if not os.path.exists(FRAMES_DIR):
         os.makedirs(FRAMES_DIR)
+
+    if not os.path.exists(f"{SUB_DIR}/wlasl_words"):
+        with open(f"{SUB_DIR}/wlasl_words", "w") as words_file:
+            words_file.write("\n".join(words))
     for i, file in enumerate(all_file, 1):
         video_name = file.split(".")[0]
         frame_subdir = f"{FRAMES_DIR}/{video_name}"

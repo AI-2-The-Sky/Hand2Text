@@ -35,7 +35,7 @@ class Hand2TextDataModule(LightningDataModule):
         Do not use it to assign state (self.x = y).
         """
         # Cut video to images
-        load_dataset()
+        load_dataset(True)
 
     def setup(self, stage: Optional[str] = None) -> None:
         """Load data.

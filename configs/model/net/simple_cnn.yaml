@@ -3,4 +3,4 @@ width: 28
 height: 28
 channels: 1
 kernel_size: 5
-corpus: "/usr/share/dict/words"
+corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words

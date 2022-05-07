@@ -22,7 +22,12 @@ class Hand2TextDataModule(LightningDataModule):
         self.save_hyperparameters(logger=False)
 
         # data transformations
-        self.transforms = transforms.Compose([transforms.ToTensor()])
+        self.transforms = transforms.Compose(
+            [
+                transforms.Resize((320, 240)),
+                transforms.ToTensor(),
+            ]
+        )
 
         self.data_train: Optional[Dataset] = None
         self.data_val: Optional[Dataset] = None
@@ -47,7 +52,7 @@ class Hand2TextDataModule(LightningDataModule):
         """
 
         # Load dataset
-        dataset, words = load_dataset()
+        dataset, words = load_dataset(transform=self.transforms)
 
         data = {"train": [], "test": [], "val": []}
         for inst in dataset:

@@ -63,7 +63,7 @@ def frame_meta_to_label(frames: List[FrameMetaData]) -> List[FrameData]:
 
 
 def get_frame_from_video(
-    video_path: str, frame_subdir: str, label: VideoMetadata
+    video_path: str, frame_subdir: str, label: VideoMetadata, download: bool
 ) -> List[FrameMetaData]:
     """Returns array of frames for given frame_subdir.
 
@@ -75,7 +75,7 @@ def get_frame_from_video(
         List[FrameMetaData]: List of frames with their datas
     """
     video_frames = []
-    if not os.path.exists(frame_subdir):
+    if download and not os.path.exists(frame_subdir):
         os.makedirs(frame_subdir)
         vid = cv2.VideoCapture(video_path)
         current_frame = 0
@@ -101,7 +101,17 @@ def get_frame_from_video(
     return video_frames
 
 
-def load_dataset():
+def load_dataset(download: bool = False) -> Tuple[List[FrameMetaData], List[str]]:
+    """Returns the dataset with metadata, and the word-labels as a list.
+
+    Args:
+        download (bool, optional): Has to cut missing frames. Defaults to False.
+
+    Returns:
+        Tuple[List[FrameMetaData], List[str]]:
+            [0]: Dataset
+            [1]: List of words, dataset's label being word's index
+    """
     SUB_DIR = f"{ROOT_DIR}/data/H2T"
     FRAMES_DIR = f"{SUB_DIR}/frames"
     RAW_VIDEOS_PATH = f"{SUB_DIR}/raw_videos"
@@ -124,6 +134,7 @@ def load_dataset():
             continue
         print("Extract frames from %s: %.2f%%" % (file, i * 100 / len_all_file))
         frames = get_frame_from_video(
-            f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name]
+            f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name], download
         )
         data.extend(frames)
+    return (data, words)

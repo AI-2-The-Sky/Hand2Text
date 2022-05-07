@@ -35,7 +35,7 @@ class Hand2TextDataModule(LightningDataModule):
         Do not use it to assign state (self.x = y).
         """
         # Cut video to images
-        load_dataset()
+        load_dataset(True)
 
     def setup(self, stage: Optional[str] = None) -> None:
         """Load data.
@@ -49,20 +49,20 @@ class Hand2TextDataModule(LightningDataModule):
         # Load dataset
         dataset, words = load_dataset()
 
+        data = {"train": [], "test": [], "val": []}
+        for inst in dataset:
+            data[inst[1].split].append(inst)
+
         self.words = words
 
         # Assign train/val split(s) for use in Dataloaders
         if stage in (None, "fit"):
-            data_train = filter(lambda x: x[1].split == "train", dataset)
-            self.data_train = frame_meta_to_label(data_train)
-
-            data_val = filter(lambda x: x[1].split == "val", dataset)
-            self.data_val = frame_meta_to_label(data_val)
+            self.data_train = frame_meta_to_label(data["train"])
+            self.data_val = frame_meta_to_label(data["val"])
 
         # Assign test split(s) for use in Dataloaders
         if stage in (None, "test"):
-            data_test = filter(lambda x: x[1].split == "test", dataset)
-            self.data_test = frame_meta_to_label(data_test)
+            self.data_test = frame_meta_to_label(data["test"])
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(

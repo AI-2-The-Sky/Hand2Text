@@ -5,6 +5,7 @@ from typing import Dict, List, Literal, Tuple
 import cv2
 from numpy import ndarray
 from PIL import Image
+from tqdm import tqdm
 
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 JSON_PATH = f"{ROOT_DIR}/data/H2T/WLASL_v0.3.json"
@@ -127,16 +128,22 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameMeta
     if not os.path.exists(FRAMES_DIR):
         os.makedirs(FRAMES_DIR)
 
-    if not os.path.exists(f"{SUB_DIR}/wlasl_words"):
+    if os.path.exists(f"{SUB_DIR}/wlasl_words"):
         with open(f"{SUB_DIR}/wlasl_words", "w") as words_file:
             words_file.write("\n".join(words))
-    for i, file in enumerate(all_file, 1):
+
+    if download:
+        print("Downloading dataset...")
+    else:
+        print("Reframing videos...")
+
+    for file in tqdm(all_file):
         video_name = file.split(".")[0]
         frame_subdir = f"{FRAMES_DIR}/{video_name}"
 
         if not (video_name in labels.keys()):
             continue
-        print("Extract frames from %s: %.2f%%" % (file, i * 100 / len_all_file))
+
         frames = get_frame_from_video(
             f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name], download, transform
         )

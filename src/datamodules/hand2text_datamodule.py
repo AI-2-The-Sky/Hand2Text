@@ -15,6 +15,8 @@ class Hand2TextDataModule(LightningDataModule):
         batch_size: int = 64,
         num_workers: int = 0,
         pin_memory: bool = False,
+        width=320,
+        height=240,
     ):
         super().__init__()
 
@@ -24,7 +26,7 @@ class Hand2TextDataModule(LightningDataModule):
         # data transformations
         self.transforms = transforms.Compose(
             [
-                transforms.Resize((320, 240)),
+                transforms.Resize(size=(width, height)),
                 transforms.ToTensor(),
             ]
         )

@@ -25,7 +25,7 @@ def dense_arg(channels, width, height, kernel_size):
 class SimpleCNNModel(nn.Module):
     def __init__(
         self,
-        channels: int = 1,
+        channels: int = 3,
         width: int = 28,
         height: int = 28,
         kernel_size: int = 5,
@@ -44,16 +44,19 @@ class SimpleCNNModel(nn.Module):
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(self.channels * 2, self.channels * 4, kernel_size)
 
-        self.fc1 = nn.Linear(
-            dense_arg(self.channels, self.width, self.height, self.kernel_size), 120
-        )
+        # self.fc1 = nn.Linear(
+        #     dense_arg(self.channels, self.width, self.height, self.kernel_size), 120
+        # )
+        self.fc1 = nn.Linear(52668, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, self.n)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
 
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+        x = F.relu(self.conv1(x))
+        x = self.pool(x)
+        x = F.relu(self.conv2(x))
+        x = self.pool(x)
 
         x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))

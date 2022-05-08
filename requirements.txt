@@ -59,8 +59,11 @@ opencv-python>=4.5.5.64
 # --------- basics --------- #
 numpy
 pandas
-#Pillow==9.0.1
+Pillow==9.0.1
 
 # --------- inference --------- #
 # fastapi
 # uvicorn
+
+# --------- others --------- #
+tqdm

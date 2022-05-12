@@ -168,7 +168,9 @@ outputs
 /data/raw
 /data/raw_videos
 /data/MNIST
+/data/MNIST/*
 /data/external
 /data/interim
 /data/H2T/*
 !/data/H2T/*.dvc
+/data/How2Sign/*

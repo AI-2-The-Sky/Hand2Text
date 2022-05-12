@@ -6,7 +6,7 @@ from torchvision import datasets, transforms
 
 
 def get_conv_shape(shape, kernel_size):
-    return (shape[0] * 2, (shape[1] - (kernel_size - 1)), (shape[1] - (kernel_size - 1)))
+    return (shape[0] * 2, (shape[1] - (kernel_size - 1)), (shape[2] - (kernel_size - 1)))
 
 
 def get_pool_shape(shape):
@@ -25,7 +25,7 @@ def dense_arg(channels, width, height, kernel_size):
 class SimpleCNNModel(nn.Module):
     def __init__(
         self,
-        channels: int = 1,
+        channels: int = 3,
         width: int = 28,
         height: int = 28,
         kernel_size: int = 5,
@@ -40,24 +40,49 @@ class SimpleCNNModel(nn.Module):
         self.corpus = np.array(open(corpus).read().splitlines())
         self.n = len(self.corpus)
 
-        self.conv1 = nn.Conv2d(self.channels, self.channels * 2, kernel_size)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(self.channels * 2, self.channels * 4, kernel_size)
+        self.conv1 = nn.Conv2d(self.channels, self.channels * 2, kernel_size=self.kernel_size)
+        self.norm_1 = nn.BatchNorm2d(self.channels * 2)
 
+        self.conv2 = nn.Conv2d(self.channels * 2, self.channels * 4, kernel_size=self.kernel_size)
+        self.norm_2 = nn.BatchNorm2d(self.channels * 4)
+
+        self.pool = nn.MaxPool2d(2, 2)
+        self.drop = nn.Dropout(p=0.25)
         self.fc1 = nn.Linear(
             dense_arg(self.channels, self.width, self.height, self.kernel_size), 120
         )
+        # self.fc1 = nn.Linear(52668, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, self.n)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
 
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+        # Block 1
+        x = F.relu(self.conv1(x))
+        x = self.norm_1(x)
+        x = self.drop(x)
+        x = self.pool(x)
 
+        # Block2
+        x = F.relu(self.conv2(x))
+        x = self.norm_2(x)
+        x = self.drop(x)
+        x = self.pool(x)
+
+        # Flatten
         x = torch.flatten(x, 1)
+
+        # FCN
+        # Layer 1
+        x = self.drop(x)
         x = F.relu(self.fc1(x))
+
+        # Layer 2
+        x = self.drop(x)
         x = F.relu(self.fc2(x))
+        x = self.drop(x)
+
+        # Layer 3
         x = self.fc3(x)
         return x
 

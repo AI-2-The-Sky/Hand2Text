@@ -4,6 +4,8 @@ from typing import Dict, List, Literal, Tuple
 
 import cv2
 from numpy import ndarray
+from PIL import Image
+from tqdm import tqdm
 
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 JSON_PATH = f"{ROOT_DIR}/data/H2T/WLASL_v0.3.json"
@@ -63,7 +65,7 @@ def frame_meta_to_label(frames: List[FrameMetaData]) -> List[FrameData]:
 
 
 def get_frame_from_video(
-    video_path: str, frame_subdir: str, label: VideoMetadata, download: bool
+    video_path: str, frame_subdir: str, label: VideoMetadata, download: bool, transform=None
 ) -> List[FrameMetaData]:
     """Returns array of frames for given frame_subdir.
 
@@ -95,13 +97,16 @@ def get_frame_from_video(
         frames_files = os.listdir(frame_subdir)
         for file in frames_files:
             frame = cv2.imread(f"{frame_subdir}/{file}")
+            if transform:
+                pil_image = Image.fromarray(frame)
+                frame = transform(pil_image)
             video_frames.append((frame, label))
 
     cv2.destroyAllWindows()
     return video_frames
 
 
-def load_dataset(download: bool = False) -> Tuple[List[FrameMetaData], List[str]]:
+def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameMetaData], List[str]]:
     """Returns the dataset with metadata, and the word-labels as a list.
 
     Args:
@@ -123,18 +128,25 @@ def load_dataset(download: bool = False) -> Tuple[List[FrameMetaData], List[str]
     if not os.path.exists(FRAMES_DIR):
         os.makedirs(FRAMES_DIR)
 
-    if not os.path.exists(f"{SUB_DIR}/wlasl_words"):
+    if os.path.exists(f"{SUB_DIR}/wlasl_words"):
         with open(f"{SUB_DIR}/wlasl_words", "w") as words_file:
             words_file.write("\n".join(words))
-    for i, file in enumerate(all_file, 1):
+
+    if download:
+        print("Downloading dataset...")
+    else:
+        print("Reframing videos...")
+
+    for file in tqdm(all_file):
         video_name = file.split(".")[0]
         frame_subdir = f"{FRAMES_DIR}/{video_name}"
 
         if not (video_name in labels.keys()):
             continue
-        print("Extract frames from %s: %.2f%%" % (file, i * 100 / len_all_file))
+
         frames = get_frame_from_video(
-            f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name], download
+            f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name], download, transform
         )
+
         data.extend(frames)
     return (data, words)

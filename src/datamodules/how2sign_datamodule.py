@@ -4,10 +4,18 @@ from typing import Optional, Tuple
 
 import torch
 from pytorch_lightning import LightningDataModule
+from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import ConcatDataset, DataLoader, Dataset, random_split
 from torchvision.transforms import transforms
 
 from data.How2Sign import How2Sign
+
+
+def custom_collate(data):
+    inputs = [d["frames"] for d in data]
+    labels = [d["label"] for d in data]
+    inputs = pad_sequence(inputs, batch_first=True)
+    return inputs, labels
 
 
 class How2SignDataModule(LightningDataModule):
@@ -83,7 +91,7 @@ class How2SignDataModule(LightningDataModule):
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=True,
-            collate_fn=lambda x: tuple(zip(*x)),
+            collate_fn=custom_collate,
         )
 
     def val_dataloader(self):
@@ -93,7 +101,7 @@ class How2SignDataModule(LightningDataModule):
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=False,
-            collate_fn=lambda x: tuple(zip(*x)),
+            collate_fn=custom_collate,
         )
 
     def test_dataloader(self):
@@ -103,5 +111,5 @@ class How2SignDataModule(LightningDataModule):
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=False,
-            collate_fn=lambda x: tuple(zip(*x)),
+            collate_fn=custom_collate,
         )

@@ -73,6 +73,8 @@ class How2Sign(Dataset):
 
         vid.release()
 
+        video_frames = torch.stack(video_frames)
+
         sample = {"frames": video_frames, "label": self.y[idx]}
 
-        return sample["frames"], sample["label"]
+        return sample

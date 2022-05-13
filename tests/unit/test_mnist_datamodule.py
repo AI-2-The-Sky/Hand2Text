@@ -30,7 +30,16 @@ def test_mnist_datamodule(batch_size):
     batch = next(iter(datamodule.train_dataloader()))
     x, y = batch
 
+    print(x)
+    print(y)
+
+    print(x.size())
+
     assert len(x) == batch_size
     assert len(y) == batch_size
     assert x.dtype == torch.float32
     assert y.dtype == torch.int64
+
+
+if __name__ == "__main__":
+    test_mnist_datamodule(1)

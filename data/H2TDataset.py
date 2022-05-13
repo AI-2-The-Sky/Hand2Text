@@ -9,7 +9,7 @@ JSON_PATH = f"{ROOT_DIR}/data/H2T/WLASL_v0.3.json"
 # Doc: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
 
 
-class H2TDataset(Dataset):
+class Vid2Frame(Dataset):
     """Hand2Text dataset."""
 
     def __init__(self, json_path=JSON_PATH, root_dir=ROOT_DIR, transform=None):

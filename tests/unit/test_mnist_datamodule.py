@@ -39,7 +39,3 @@ def test_mnist_datamodule(batch_size):
     assert len(y) == batch_size
     assert x.dtype == torch.float32
     assert y.dtype == torch.int64
-
-
-if __name__ == "__main__":
-    test_mnist_datamodule(1)

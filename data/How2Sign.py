@@ -1,4 +1,5 @@
 import os
+import re
 from os.path import exists
 
 import cv2
@@ -10,6 +11,7 @@ from torch.utils.data import Dataset
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 VID_DIR = "raw_videos"
 LAB_FILE = "how2sign_realigned.csv"
+VOCABULARY = "vocabulary"
 FRAME_FREQ = 25
 
 # Doc: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
@@ -39,10 +41,20 @@ class How2Sign(Dataset):
         self.video_dir = f"{self.data_dir}/{videos_dir}"
         LABELS_PATH = f"{self.data_dir}/{labels_file}"
 
-        # self.x_files =  os.listdir(self.video_dir)
         data = pd.read_csv(LABELS_PATH, delimiter="\t")
         self.x_files = data.iloc[:, 3].values.tolist()
         self.y = data.iloc[:, -1:].values.tolist()
+
+        vocabulary = []
+        for sentence in self.y:
+            for word in re.sub("[^\w]", " ", sentence[0]).split():
+                if word.lower() not in vocabulary:
+                    vocabulary.append(word.lower())
+
+        file = open(f"{self.data_dir}/{VOCABULARY}", "w")
+        for word in vocabulary:
+            file.writelines(word + "\n")
+        file.close()
 
         for i, file in enumerate(self.x_files):
             if not exists(f"{self.video_dir}/{file}.mp4"):

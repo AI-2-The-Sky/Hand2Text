@@ -34,10 +34,14 @@ class SimpleCNNModule(LightningModule):
 
     def step(self, batch: Any):
         x, y = batch
-        logits = self.forward(x)
-        loss = self.criterion(logits, y)
-        preds = torch.argmax(logits, dim=1)
-        return loss, preds, y
+        loss = 0
+        sentence = []
+        for img in x:
+            logits = self.forward(img)
+            loss += self.criterion(logits, y)
+            preds = torch.argmax(logits, dim=1)
+            sentence.append(preds)
+        return loss, sentence, y
 
     def training_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)

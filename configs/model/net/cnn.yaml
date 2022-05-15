@@ -1,6 +1,7 @@
 _target_: src.models.components.simple_cnn.SimpleCNNModel
+channels: 3
 width: 320
 height: 240
-channels: 3
 kernel_size: 5
 corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words
+# corpus: ${hydra:runtime.cwd}/data/H2T

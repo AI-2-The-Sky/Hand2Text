@@ -126,7 +126,7 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData
     if not os.path.exists(FRAMES_DIR):
         os.makedirs(FRAMES_DIR)
 
-    if os.path.exists(f"{SUB_DIR}/wlasl_words"):
+    if not os.path.exists(f"{SUB_DIR}/wlasl_words"):
         with open(f"{SUB_DIR}/wlasl_words", "w") as words_file:
             words_file.write("\n".join(words))
 
@@ -147,9 +147,18 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData
             f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, download, transform
         )
         subdataset[0].extend(frames)
-        subdataset[1].append(labels[video_name])
+        subdataset[1].extend([labels[video_name] for _ in range(len(frames))])
         if i % 3 == 0:
             data.append(subdataset)
             subdataset = [[], []]
 
     return (data, words)
+	# [[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]]
+	# 
+	# [
+	# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+	# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+	# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+	# ]
+	#  + labels_2 + labels_3]]
+	# [List de tous les mots]

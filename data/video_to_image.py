@@ -24,21 +24,22 @@ class VideoMetadata:
         VideoMetadata.split_count[split] += 1
 
 
+FrameMetaData = Tuple[ndarray, VideoMetadata]
 FrameData = Tuple[List[ndarray], List[int]]
 
 
-def load_labels() -> Tuple[Dict[str, VideoMetadata], List[str]]:
+def load_labels() -> Tuple[Dict[str, int], List[str]]:
     """Returns labels.
 
     Returns:
-        Tuple[Dict[str, VideoMetadata], List[str]]:
+        Tuple[Dict[str, int], List[str]]:
             [0]: dict[video_name, metadata]
             [1]: list where label index correspond to a word
     """
     with open(JSON_PATH) as ipf:
         json_data = json.load(ipf)
 
-    videos_labels: Dict[str, VideoMetadata] = {}
+    videos_labels: Dict[str, int] = {}
     words: List[str] = []
     label = -1
     for ent in json_data:
@@ -47,20 +48,18 @@ def load_labels() -> Tuple[Dict[str, VideoMetadata], List[str]]:
         words.append(word)
 
         for inst in ent["instances"]:
-            videos_labels[inst["video_id"]] = VideoMetadata(
-                label, inst["bbox"], inst["fps"], inst["split"]
-            )
+            videos_labels[inst["video_id"]] = label
     return (videos_labels, words)
 
 
-# def frame_meta_to_label(frames: List[FrameMetaData]) -> List[FrameData]:
-#     """Convert list of frames with metadata to only labels
-#     Args:
-#         frames (List[FrameMetaData]): Frames to convert
-#     Returns:
-#         List[FrameData]: Converted frames
-#     """
-#     return list(map(lambda frame: (frame[0], frame[1].label), frames))
+def frame_meta_to_label(frames: List[FrameMetaData]) -> List[FrameData]:
+    """Convert list of frames with metadata to only labels
+    Args:
+        frames (List[FrameMetaData]): Frames to convert
+    Returns:
+        List[FrameData]: Converted frames
+    """
+    return list(map(lambda frame: (frame[0], frame[1].label), frames))
 
 
 def get_frame_from_video(
@@ -154,8 +153,3 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData
             subdataset = [[], []]
 
     return (data, words)
-
-
-for (element1, element2) in load_dataset()[0]:
-    print("image:", len(element1))
-    print("label:", len(element2))

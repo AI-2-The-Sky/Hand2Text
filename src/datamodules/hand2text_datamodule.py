@@ -56,20 +56,17 @@ class Hand2TextDataModule(LightningDataModule):
         # Load dataset
         dataset, words = load_dataset(transform=self.transforms)
 
-        data = {"train": [], "test": [], "val": []}
-        for inst in dataset:
-            data[inst[1].split].append(inst)
-
         self.words = words
 
-        # Assign train/val split(s) for use in Dataloaders
-        if stage in (None, "fit"):
-            self.data_train = frame_meta_to_label(data["train"])
-            self.data_val = frame_meta_to_label(data["val"])
+        test_size = int(len(dataset) * 0.1)
+        val_size = int(len(dataset) * 0.2)
+        train_size = len(dataset) - (test_size + val_size)
 
-        # Assign test split(s) for use in Dataloaders
-        if stage in (None, "test"):
-            self.data_test = frame_meta_to_label(data["test"])
+        self.data_train, self.data_test, self.data_val = random_split(
+            dataset,
+            [train_size, test_size, val_size],
+            generator=torch.Generator().manual_seed(42),
+        )
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(

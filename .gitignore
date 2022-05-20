@@ -168,7 +168,7 @@ outputs
 /data/raw
 /data/raw_videos
 /data/MNIST
-/data/MNIST/*
+# /data/MNIST/*
 /data/external
 /data/interim
 /data/H2T/*

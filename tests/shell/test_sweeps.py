@@ -35,6 +35,7 @@ def test_default_sweep():
 def test_optuna_sweep():
     """Test Optuna sweeper."""
     command = [
+        "-W ignore",
         "train.py",
         "-m",
         "hparams_search=mnist_optuna",

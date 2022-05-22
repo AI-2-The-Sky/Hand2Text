@@ -1,13 +1,13 @@
+# import sys
+
+# sys.path.insert(0, "/Users/mcciupek/Documents/42/AI/Hand2Text")
+
+import os
 import random
 
 from src.datamodules.how2sign_datamodule import How2SignDataModule
 from src.models.components.simple_cnn import SimpleCNNModel
 from src.models.simple_cnn_module import SimpleCNNModule
-
-# import sys
-
-# sys.path.insert(0, "/Users/mcciupek/Documents/42/AI/Hand2Text")
-
 
 if __name__ == "__main__":
 
@@ -26,9 +26,7 @@ if __name__ == "__main__":
 
     print(y)
 
-    net = SimpleCNNModel(
-        corpus="/Users/mcciupek/Documents/42/AI/Hand2Text/data/How2Sign/vocabulary"
-    )
+    net = SimpleCNNModel(corpus=os.path.join(os.getcwd(), "data/How2Sign", "vocabulary"))
     module = SimpleCNNModule(net)
 
     loss, preds, targets = module.step(batch)

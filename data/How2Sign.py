@@ -45,7 +45,7 @@ class How2Sign(Dataset):
         self.x_files = data.iloc[:, 3].values.tolist()
         self.y = data.iloc[:, -1:].values.tolist()
 
-        vocabulary = []
+        vocabulary = [""]
         for sentence in self.y:
             for word in re.sub("[^\w]", " ", sentence[0]).split():
                 if word.lower() not in vocabulary:
@@ -87,6 +87,13 @@ class How2Sign(Dataset):
 
         video_frames = torch.stack(video_frames)
 
-        sample = {"frames": video_frames, "label": self.y[idx]}
+        sentence = [word.lower() for word in re.sub("[^\w]", " ", self.y[idx][0]).split()]
+        vocabulary = np.array(open(f"{self.data_dir}/{VOCABULARY}").read().splitlines())
+
+        words = [np.where(vocabulary == word)[0][0] for word in sentence]
+        words = torch.LongTensor(words)
+
+        # sample = {"frames": video_frames, "label": self.y[idx]}
+        sample = {"frames": video_frames, "label": words}
 
         return sample

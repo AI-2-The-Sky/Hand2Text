@@ -2,7 +2,7 @@ import sys
 
 from torchtext.data.metrics import bleu_score
 
-from src.interpret import interpret
+from src.utils.interpret import interpret
 
 if __name__ == "__main__":
     pred = ["My full pytorch test"]

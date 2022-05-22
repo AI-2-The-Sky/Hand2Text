@@ -15,6 +15,7 @@ def custom_collate(data):
     inputs = [d["frames"] for d in data]
     labels = [d["label"] for d in data]
     inputs = pad_sequence(inputs, batch_first=True)
+    labels = pad_sequence(labels, batch_first=True)
     return inputs, labels
 
 

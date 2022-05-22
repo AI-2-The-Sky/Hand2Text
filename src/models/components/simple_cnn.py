@@ -26,8 +26,8 @@ class SimpleCNNModel(nn.Module):
     def __init__(
         self,
         channels: int = 3,
-        width: int = 28,
-        height: int = 28,
+        width: int = 1280,
+        height: int = 720,
         kernel_size: int = 5,
         corpus: str = "/usr/share/dict/words",
     ):

@@ -11,8 +11,6 @@ class BleuScore(Metric):
         # self.add_state("score", default=torch.tensor(0))
 
     def update(self, candidate_corpus, references_corpus, max_n=4, weights=[0.0, 1.0, 0.0, 0.0]):
-        # candidate_corpus = [['My', 'full', 'pytorch', 'test']] –> an iterable of candidate translations.
-        # references_corpus = [[['My', 'full', 'pytorch', 'test']]] –> an iterable of iterables of reference translations
         self.candidate_corpus = candidate_corpus
         self.reference_corpus = references_corpus
         self.max_n = max_n

@@ -1,6 +1,6 @@
 _target_: src.models.components.simple_cnn.SimpleCNNModel
-width: 320
-height: 240
+width: 1280
+height: 720
 channels: 3
 kernel_size: 5
-corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words
+corpus: ${hydra:runtime.cwd}/data/How2Sign/vocabulary

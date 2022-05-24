@@ -2,10 +2,7 @@ import sys
 
 from torchtext.data.metrics import bleu_score
 
-from src.interpret import interpret
-
-# sys.path.insert(0, "/Users/mcciupek/Documents/42/AI/Hand2Text/src")
-
+from src.utils.interpret import interpret
 
 if __name__ == "__main__":
     pred = ["My full pytorch test"]

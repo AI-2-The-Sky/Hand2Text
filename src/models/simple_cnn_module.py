@@ -1,9 +1,17 @@
+import os
+import re
 from typing import Any, List
 
+import numpy as np
 import torch
 from pytorch_lightning import LightningModule
 from torchmetrics import MaxMetric
 from torchmetrics.classification.accuracy import Accuracy
+
+from src.models.components.BlueScore import BleuScore
+
+ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
+VOCABULARY = "vocabulary"
 
 
 class SimpleCNNModule(LightningModule):
@@ -23,21 +31,28 @@ class SimpleCNNModule(LightningModule):
         self.criterion = torch.nn.CrossEntropyLoss()
 
         # metrics
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
-        self.test_acc = Accuracy()
+        self.train_acc = BleuScore()
+        self.val_acc = BleuScore()
+        self.test_acc = BleuScore()
 
         self.val_acc_best = MaxMetric()
+
+        self.corpus = np.array(open(f"{ROOT_DIR}/data/How2Sign/{VOCABULARY}").read().splitlines())
 
     def forward(self, x: torch.Tensor):
         return self.net(x)
 
     def step(self, batch: Any):
         x, y = batch
-        logits = self.forward(x)
-        loss = self.criterion(logits, y)
-        preds = torch.argmax(logits, dim=1)
-        return loss, preds, y
+        loss = 0
+        sentence = np.empty((x.size()[0], x.size()[1]), dtype="<U256")
+        for i in range(x.size()[1]):
+            logits = self.forward(x[:, i, :, :])
+            loss += self.criterion(logits, y[:, i])
+            preds = self.corpus[torch.argmax(logits, dim=1)]
+            sentence[:, i] = preds
+        ground_truth = [[x] for x in self.corpus[y]]
+        return loss, sentence.tolist(), ground_truth
 
     def training_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)

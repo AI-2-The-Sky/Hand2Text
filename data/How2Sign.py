@@ -47,7 +47,7 @@ class How2Sign(Dataset):
 
         vocabulary = [""]
         for sentence in self.y:
-            for word in re.sub("[^\w]", " ", sentence[0]).split():
+            for word in re.sub(r"[^\w]", " ", sentence[0]).split():
                 if word.lower() not in vocabulary:
                     vocabulary.append(word.lower())
 
@@ -69,6 +69,7 @@ class How2Sign(Dataset):
 
     def __getitem__(self, idx):
         video_frames = []
+
         vid = cv2.VideoCapture(f"{self.video_dir}/{self.x_files[idx]}.mp4")
         current_frame = 0
 
@@ -87,7 +88,7 @@ class How2Sign(Dataset):
 
         video_frames = torch.stack(video_frames)
 
-        sentence = [word.lower() for word in re.sub("[^\w]", " ", self.y[idx][0]).split()]
+        sentence = [word.lower() for word in re.sub(r"[^\w]", " ", self.y[idx][0]).split()]
         vocabulary = np.array(open(f"{self.data_dir}/{VOCABULARY}").read().splitlines())
 
         words = [np.where(vocabulary == word)[0][0] for word in sentence]

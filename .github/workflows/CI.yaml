@@ -15,4 +15,4 @@ jobs:
       - name: unit-tests
         run: |
           export HYDRA_FULL_ERROR=1
-          python -m pytest -k "not slow"
+          python -m pytest

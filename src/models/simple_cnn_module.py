@@ -47,6 +47,8 @@ class SimpleCNNModule(LightningModule):
         loss = 0
         sentence = np.empty((x.size()[0], x.size()[1]), dtype="<U256")
         for i in range(x.size()[1]):
+            if i == len(y[0]):
+                break
             logits = self.forward(x[:, i, :, :])
             loss += self.criterion(logits, y[:, i])
             preds = self.corpus[torch.argmax(logits, dim=1)]

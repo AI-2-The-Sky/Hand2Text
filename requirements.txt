@@ -69,4 +69,4 @@ Pillow==9.0.1
 
 # --------- others --------- #
 tqdm
-protoc>=3.19.0
+protobuf

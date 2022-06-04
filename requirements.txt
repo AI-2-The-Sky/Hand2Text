@@ -67,3 +67,5 @@ Pillow==9.0.1
 
 # --------- others --------- #
 tqdm
+protobuf<3.20
+av

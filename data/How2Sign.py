@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import Dataset
 
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
-VID_DIR = "raw_videos"
+VID_DIR = "raw_videos/train"
 LAB_FILE = "how2sign_realigned.csv"
 VOCABULARY = "vocabulary"
 FRAME_FREQ = 25
@@ -36,6 +36,8 @@ class How2Sign(Dataset):
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
+        super(How2Sign).__init__()
+
         self.data_dir = f"{root_dir}/data/How2Sign"
 
         self.video_dir = f"{self.data_dir}/{videos_dir}"
@@ -56,10 +58,13 @@ class How2Sign(Dataset):
             file.writelines(word + "\n")
         file.close()
 
-        for i, file in enumerate(self.x_files):
-            if not exists(f"{self.video_dir}/{file}.mp4"):
-                self.x_files.remove(file)
+        i = 0
+        while i < len(self.x_files):
+            if not exists(f"{self.video_dir}/{self.x_files[i]}.mp4"):
+                self.x_files.remove(self.x_files[i])
                 self.y.remove(self.y[i])
+            else:
+                i += 1
 
         self.frame_freq = frame_frequency
         self.transform = transform

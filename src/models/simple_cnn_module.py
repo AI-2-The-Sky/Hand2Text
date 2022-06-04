@@ -8,7 +8,7 @@ from pytorch_lightning import LightningModule
 from torchmetrics import MaxMetric
 from torchmetrics.classification.accuracy import Accuracy
 
-from src.models.components.BlueScore import BleuScore
+from src.utils.BlueScore import BleuScore
 
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
 VOCABULARY = "vocabulary"
@@ -47,6 +47,8 @@ class SimpleCNNModule(LightningModule):
         loss = 0
         sentence = np.empty((x.size()[0], x.size()[1]), dtype="<U256")
         for i in range(x.size()[1]):
+            if i >= y.size()[1]:
+                break
             logits = self.forward(x[:, i, :, :])
             loss += self.criterion(logits, y[:, i])
             preds = self.corpus[torch.argmax(logits, dim=1)]

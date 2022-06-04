@@ -4,18 +4,18 @@
 # python train.py experiment=example
 
 defaults:
-  - override /datamodule: hand2text.yaml
-  - override /model: simple_cnn.yaml
+  - override /datamodule: vit.yaml
+  - override /model: vit.yaml
   - override /callbacks: default.yaml
   - override /trainer: default.yaml
-  - override /model/net: cnn.yaml
+  - override /model/net: vit.yaml
   - override /logger: many_loggers.yaml
 
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-name: "merge_by_three"
+name: "vit_merge"
 
 seed: 12345
 

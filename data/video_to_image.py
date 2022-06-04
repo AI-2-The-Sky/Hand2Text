@@ -3,6 +3,7 @@ import os
 from typing import Dict, List, Literal, Tuple
 
 import cv2
+import fire
 from numpy import ndarray
 from PIL import Image
 from tqdm import tqdm
@@ -153,12 +154,17 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData
             subdataset = [[], []]
 
     return (data, words)
-	# [[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]]
-	# 
-	# [
-	# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
-	# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
-	# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
-	# ]
-	#  + labels_2 + labels_3]]
-	# [List de tous les mots]
+
+
+# [[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]]
+#
+# [
+# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+# ]
+#  + labels_2 + labels_3]]
+# [List de tous les mots]
+
+if __name__ == "__main__":
+    fire.Fire(load_dataset)

@@ -172,10 +172,27 @@ mkdir -p logs
 # Installing dependencies                                  #
 ############################################################
 echo $RED "INIT: " $END "Upgrading pip..."
-python -m pip install --upgrade pip
+$PATH_PYTHON -m pip install --upgrade pip
+
+if [ $? == 0 ]
+then
+    echo -e $COLOR_GREEN "pip has been upgraded" $COLOR_RESET
+else
+    echo -e $COLOR_RED "ERROR: could not have been upgrade" $COLOR_RESET
+	exit 1
+fi
 
 echo $RED "INIT: " $END "Installing python dependancies..."
-python -m pip install -r requirements.txt
+$PATH_PYTHON -m pip install -r requirements.txt
+
+
+if [ $? == 0 ]
+then
+    echo -e $COLOR_GREEN "Python dependencies installed !" $COLOR_RESET
+else
+    echo -e $COLOR_RED "ERROR: could not install depdencies" $COLOR_RESET
+	exit 1
+fi
 
 
 

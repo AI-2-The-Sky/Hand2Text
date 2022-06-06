@@ -6,7 +6,11 @@ from torchvision import datasets, transforms
 
 
 def get_conv_shape(shape, kernel_size):
-    return (shape[0] * 2, (shape[1] - (kernel_size - 1)), (shape[2] - (kernel_size - 1)))
+    return (
+        shape[0] * 2,
+        (shape[1] - (kernel_size - 1)),
+        (shape[2] - (kernel_size - 1)),
+    )
 
 
 def get_pool_shape(shape):
@@ -33,6 +37,7 @@ class SimpleCNNModel(nn.Module):
     ):
         super().__init__()
 
+        print("WE ARE USING OUR SimpleCNNModel")
         self.channels = channels
         self.width = width
         self.height = height
@@ -54,6 +59,7 @@ class SimpleCNNModel(nn.Module):
         # self.fc1 = nn.Linear(52668, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, self.n)
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
 
@@ -84,6 +90,7 @@ class SimpleCNNModel(nn.Module):
 
         # Layer 3
         x = self.fc3(x)
+        x = self.softmax(x)
         return x
 
     def to_str(self, pred: torch.Tensor) -> list:

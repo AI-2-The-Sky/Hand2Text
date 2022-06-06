@@ -3,6 +3,7 @@ import os
 from typing import Dict, List, Literal, Tuple
 
 import cv2
+import fire
 from numpy import ndarray
 from PIL import Image
 from tqdm import tqdm
@@ -25,21 +26,21 @@ class VideoMetadata:
 
 
 FrameMetaData = Tuple[ndarray, VideoMetadata]
-FrameData = Tuple[ndarray, int]
+FrameData = Tuple[List[ndarray], List[int]]
 
 
-def load_labels() -> Tuple[Dict[str, VideoMetadata], List[str]]:
+def load_labels() -> Tuple[Dict[str, int], List[str]]:
     """Returns labels.
 
     Returns:
-        Tuple[Dict[str, VideoMetadata], List[str]]:
+        Tuple[Dict[str, int], List[str]]:
             [0]: dict[video_name, metadata]
             [1]: list where label index correspond to a word
     """
     with open(JSON_PATH) as ipf:
         json_data = json.load(ipf)
 
-    videos_labels: Dict[str, VideoMetadata] = {}
+    videos_labels: Dict[str, int] = {}
     words: List[str] = []
     label = -1
     for ent in json_data:
@@ -48,9 +49,7 @@ def load_labels() -> Tuple[Dict[str, VideoMetadata], List[str]]:
         words.append(word)
 
         for inst in ent["instances"]:
-            videos_labels[inst["video_id"]] = VideoMetadata(
-                label, inst["bbox"], inst["fps"], inst["split"]
-            )
+            videos_labels[inst["video_id"]] = label
     return (videos_labels, words)
 
 
@@ -65,8 +64,8 @@ def frame_meta_to_label(frames: List[FrameMetaData]) -> List[FrameData]:
 
 
 def get_frame_from_video(
-    video_path: str, frame_subdir: str, label: VideoMetadata, download: bool, transform=None
-) -> List[FrameMetaData]:
+    video_path: str, frame_subdir: str, download: bool, transform=None
+) -> List[ndarray]:
     """Returns array of frames for given frame_subdir.
 
     Args:
@@ -74,7 +73,7 @@ def get_frame_from_video(
         frame_subdir (str): Path where to store videos' frames
 
     Returns:
-        List[FrameMetaData]: List of frames with their datas
+        List[ndarray]: List of frames
     """
     video_frames = []
     if download and not os.path.exists(frame_subdir):
@@ -89,24 +88,24 @@ def get_frame_from_video(
             elif current_frame % 25 == 0:
                 full_filepath = f"{frame_subdir}/frame-{current_frame}.jpg"
                 cv2.imwrite(full_filepath, frame)
-                video_frames.append((frame, label))
+                video_frames.append(frame)
             current_frame += 1
 
         vid.release()
-    else:
+    elif os.path.exists(frame_subdir):
         frames_files = os.listdir(frame_subdir)
         for file in frames_files:
             frame = cv2.imread(f"{frame_subdir}/{file}")
             if transform:
                 pil_image = Image.fromarray(frame)
                 frame = transform(pil_image)
-            video_frames.append((frame, label))
+            video_frames.append(frame)
 
     cv2.destroyAllWindows()
     return video_frames
 
 
-def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameMetaData], List[str]]:
+def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData], List[str]]:
     """Returns the dataset with metadata, and the word-labels as a list.
 
     Args:
@@ -123,12 +122,12 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameMeta
     all_file = os.listdir(RAW_VIDEOS_PATH)
     len_all_file = len(all_file)
     labels, words = load_labels()
-    data: List[FrameMetaData] = []
+    data: List[FrameData] = []
 
     if not os.path.exists(FRAMES_DIR):
         os.makedirs(FRAMES_DIR)
 
-    if os.path.exists(f"{SUB_DIR}/wlasl_words"):
+    if not os.path.exists(f"{SUB_DIR}/wlasl_words"):
         with open(f"{SUB_DIR}/wlasl_words", "w") as words_file:
             words_file.write("\n".join(words))
 
@@ -137,7 +136,8 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameMeta
     else:
         print("Reframing videos...")
 
-    for file in tqdm(all_file):
+    subdataset = [[], []]
+    for i, file in enumerate(tqdm(all_file), 1):
         video_name = file.split(".")[0]
         frame_subdir = f"{FRAMES_DIR}/{video_name}"
 
@@ -145,8 +145,26 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameMeta
             continue
 
         frames = get_frame_from_video(
-            f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, labels[video_name], download, transform
+            f"{RAW_VIDEOS_PATH}/{file}", frame_subdir, download, transform
         )
+        subdataset[0].extend(frames)
+        subdataset[1].extend([labels[video_name] for _ in range(len(frames))])
+        if i % 3 == 0:
+            data.append(subdataset)
+            subdataset = [[], []]
 
-        data.extend(frames)
     return (data, words)
+
+
+# [[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]]
+#
+# [
+# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+# 	[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]
+# ]
+#  + labels_2 + labels_3]]
+# [List de tous les mots]
+
+if __name__ == "__main__":
+    fire.Fire(load_dataset)

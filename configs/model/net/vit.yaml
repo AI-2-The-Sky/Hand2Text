@@ -1,0 +1,3 @@
+_target_: src.models.components.vit_baseline.ViTBaselineModel
+
+corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words

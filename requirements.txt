@@ -9,6 +9,8 @@ boto3>=1.20.24,<1.20.25
 s3fs>=2021.11.1
 dvc==2.9.5
 
+icecream
+fire
 
 # --------- loggers --------- #
 # wandb
@@ -58,6 +60,8 @@ opencv-python>=4.5.5.64
 
 # --------- basics --------- #
 numpy
+nptyping
+transformers
 pandas
 Pillow==9.0.1
 

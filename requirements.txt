@@ -48,6 +48,7 @@ torchvision>=0.11.0
 pytorch-lightning>=1.5.10
 torchmetrics>=0.7.0
 torchtext
+timm
 
 # --------- hydra --------- #
 hydra-core>=1.1.0

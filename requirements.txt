@@ -19,7 +19,7 @@ mlflow
 #mlflow>=1.1.0
 # comet-ml
 # tensorboard
-
+torch-tb-profiler-0.4.0
 
 # --------- linters --------- #
 pre-commit      # hooks for applying linters on commit

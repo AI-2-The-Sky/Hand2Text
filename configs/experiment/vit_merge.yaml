@@ -6,7 +6,7 @@
 defaults:
   - override /datamodule: vit.yaml
   - override /model: vit.yaml
-  - override /callbacks: default.yaml
+  - override /callbacks: custom.yaml
   - override /trainer: default.yaml
   - override /model/net: vit.yaml
   - override /logger: many_loggers.yaml
@@ -19,9 +19,9 @@ name: "vit_merge"
 
 seed: 12345
 
-# trainer:
-#   min_epochs: 1
-#   max_epochs: 2
+trainer:
+  min_epochs: 1
+  max_epochs: 100
 #   gradient_clip_val: 0.5
 
 # model:

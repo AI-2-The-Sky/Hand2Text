@@ -1,4 +1,3 @@
-
 from cgi import parse_multipart
 from math import ceil
 from typing import List, Optional, Tuple
@@ -13,7 +12,6 @@ from torchvision.transforms import transforms
 from transformers import ViTFeatureExtractor
 
 from data.video_to_image import frame_meta_to_label, load_dataset
-
 
 RawFrameData = NDArray[Shape["3, 320, 240"], Float32]
 RawVocabData = int
@@ -152,7 +150,6 @@ class MB3OVRFTDataModule(LightningDataModule):
         test_size = 3
         val_size = 3
         train_size = 3
-
 
         self._print_dataset_shape("dataset", self.dataset)
         # self.data_train, self.data_test, self.data_val = random_split(

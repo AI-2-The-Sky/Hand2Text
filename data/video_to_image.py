@@ -105,7 +105,9 @@ def get_frame_from_video(
     return video_frames
 
 
-def load_dataset(download: bool = False, overfit: bool = False, transform=None) -> Tuple[List[FrameData], List[str]]:
+def load_dataset(
+    download: bool = False, overfit: bool = False, transform=None
+) -> Tuple[List[FrameData], List[str]]:
     """Returns the dataset with metadata, and the word-labels as a list.
 
     Args:
@@ -158,6 +160,7 @@ def load_dataset(download: bool = False, overfit: bool = False, transform=None) 
             subdataset = [[], []]
     print(len(data))
     return (data, words)
+
 
 # [[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]]
 #

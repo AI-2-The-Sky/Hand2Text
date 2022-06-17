@@ -34,7 +34,7 @@ seed: 12345
 #   net:
 
 datamodule:
-  batch_size: 2
+  batch_size: 16
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

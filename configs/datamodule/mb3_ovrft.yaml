@@ -1,0 +1,7 @@
+
+_target_: src.datamodules.mb3_ovrft_datamodule.MB3OVRFTDataModule
+
+batch_size: 3
+num_workers: 0
+pin_memory: False
+corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words

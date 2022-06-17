@@ -105,11 +105,12 @@ def get_frame_from_video(
     return video_frames
 
 
-def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData], List[str]]:
+def load_dataset(download: bool = False, overfit: bool = False, transform=None) -> Tuple[List[FrameData], List[str]]:
     """Returns the dataset with metadata, and the word-labels as a list.
 
     Args:
         download (bool, optional): Has to cut missing frames. Defaults to False.
+        overfit (bool, optional): Load the first 3 videos. Defaults to False.
 
     Returns:
         Tuple[List[FrameMetaData], List[str]]:
@@ -141,6 +142,9 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData
         video_name = file.split(".")[0]
         frame_subdir = f"{FRAMES_DIR}/{video_name}"
 
+        if overfit and len(data) > 2:
+            break
+
         if not (video_name in labels.keys()):
             continue
 
@@ -152,9 +156,8 @@ def load_dataset(download: bool = False, transform=None) -> Tuple[List[FrameData
         if i % 3 == 0:
             data.append(subdataset)
             subdataset = [[], []]
-
+    print(len(data))
     return (data, words)
-
 
 # [[frames_1 + frames_2 + frames_3], [labels_1 + labels_2 + labels_3]]
 #

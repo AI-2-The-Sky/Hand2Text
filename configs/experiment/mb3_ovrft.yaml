@@ -4,9 +4,9 @@
 # python train.py experiment=example
 
 defaults:
-  - override /datamodule: vit.yaml
+  - override /datamodule: mb3_ovrft.yaml
   - override /model: vit.yaml
-  - override /callbacks: custom.yaml
+  - override /callbacks: default.yaml
   - override /trainer: default.yaml
   - override /model/net: vit.yaml
   - override /logger: many_loggers.yaml
@@ -15,13 +15,13 @@ defaults:
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-name: "vit_merge"
+name: "mb3_ovrft"
 
 seed: 12345
 
-trainer:
-  min_epochs: 1
-  max_epochs: 100
+# trainer:
+#   min_epochs: 1
+#   max_epochs: 2
 #   gradient_clip_val: 0.5
 
 # model:
@@ -34,7 +34,7 @@ trainer:
 #   net:
 
 datamodule:
-  batch_size: 4
+  batch_size: 3
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

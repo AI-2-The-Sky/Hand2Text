@@ -13,16 +13,11 @@ from transformers import ViTFeatureExtractor
 
 from data.video_to_image import frame_meta_to_label, load_dataset
 
-# FrameMetaData = Tuple[ndarray, VideoMetadata]
-
-
 RawFrameData = NDArray[Shape["3, 320, 240"], Float32]
 RawVocabData = int
 
-
 TorchFrames = NDArray[Shape["* batch, 224, 224, 3"], Float32]
 TorchLabels = NDArray[Shape["* batch"], LongDouble]
-# ProcessedDataset =
 
 
 class SignedDataset(Dataset):
@@ -87,11 +82,11 @@ class SignedDataset(Dataset):
         return self.size
 
 
-class ViTDataModule(LightningDataModule):
+class MB3OVRFTDataModule(LightningDataModule):
     def __init__(
         self,
         data_dir: str = "data/",
-        batch_size: int = 64,
+        batch_size: int = 4,
         num_workers: int = 0,
         pin_memory: bool = False,
         width=320,
@@ -122,7 +117,7 @@ class ViTDataModule(LightningDataModule):
         Do not use it to assign state (self.x = y).
         """
         # Cut video to images
-        load_dataset(download=True)
+        load_dataset(download=True, overfit=True)
         pass
 
     def _print_dataset_shape(self, dataset_name, dataset):
@@ -143,29 +138,25 @@ class ViTDataModule(LightningDataModule):
         """
 
         # Load dataset
-        dataset, words = load_dataset(transform=self.transforms)
+        dataset, words = load_dataset(overfit=True, transform=self.transforms)
 
         self.dataset = SignedDataset(dataset[: self.hparams.batch_size * 4], self.hparams.corpus)
 
         self.words = words
 
-        test_size = int(len(self.dataset) * 0.25)
-        val_size = int(len(self.dataset) * 0.25)
-        train_size = len(self.dataset) - (test_size + val_size)
-
         self._print_dataset_shape("dataset", self.dataset)
-        self.data_train, self.data_test, self.data_val = random_split(
-            self.dataset,
-            [train_size, test_size, val_size],
-            generator=torch.Generator().manual_seed(42),
-        )
-        self._print_dataset_shape("dataset_train", self.data_train)
-        self._print_dataset_shape("dataset_val", self.data_val)
-        self._print_dataset_shape("dataset_test", self.data_test)
+        # self.data_train, self.data_test, self.data_val = random_split(
+        #     self.dataset,
+        #     [train_size, test_size, val_size],
+        #     generator=torch.Generator().manual_seed(42),
+        # )
+        self._print_dataset_shape("dataset_train", self.dataset)
+        self._print_dataset_shape("dataset_val", self.dataset)
+        self._print_dataset_shape("dataset_test", self.dataset)
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
-            dataset=self.data_train,
+            dataset=self.dataset,
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
@@ -175,7 +166,7 @@ class ViTDataModule(LightningDataModule):
 
     def val_dataloader(self) -> DataLoader:
         return DataLoader(
-            dataset=self.data_val,
+            dataset=self.dataset,
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
@@ -184,7 +175,7 @@ class ViTDataModule(LightningDataModule):
 
     def test_dataloader(self) -> DataLoader:
         return DataLoader(
-            dataset=self.data_test,
+            dataset=self.dataset,
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,

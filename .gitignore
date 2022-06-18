@@ -151,7 +151,7 @@ env.bak/
 venv.bak/
 
 # logs
-logs/
+logs/*
 wandb/
 mlruns/
 
@@ -168,12 +168,13 @@ outputs
 /data/raw
 /data/raw_videos
 /data/MNIST
-# /data/MNIST/*
 /data/external
 /data/interim
 /data/H2T/*
 !/data/H2T/*.dvc
-# /data/How2Sign/*
 
 # Other
 .DS_Store
+/data/How2Sign/*
+!/data/How2Sign/*.dvc
+!logs/*.dvc

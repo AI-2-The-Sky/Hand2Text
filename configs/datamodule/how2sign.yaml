@@ -1,5 +1,5 @@
 _target_: src.datamodules.how2sign_datamodule.How2SignDataModule
 
-batch_size: 64
+batch_size: 1
 num_workers: 0
 pin_memory: False

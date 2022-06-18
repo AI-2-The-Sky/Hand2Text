@@ -1,29 +1,93 @@
-from typing import Optional, Tuple
+from cgi import parse_multipart
+from math import ceil
+from typing import List, Optional, Tuple
 
 import numpy as np
 import torch
+from nptyping import Float32, LongDouble, NDArray, Number, Shape, UInt
+from numpy import ndarray
 from pytorch_lightning import LightningDataModule
-from torch.utils.data import ConcatDataset, DataLoader, Dataset, random_split
+from torch.utils.data import ConcatDataset, DataLoader, Dataset, IterableDataset, random_split
 from torchvision.transforms import transforms
+from transformers import ViTFeatureExtractor
 
 from data.video_to_image import frame_meta_to_label, load_dataset
 
+# FrameMetaData = Tuple[ndarray, VideoMetadata]
+
+
+RawFrameData = NDArray[Shape["3, 320, 240"], Float32]
+RawVocabData = int
+
+
+TorchFrames = NDArray[Shape["* batch, 224, 224, 3"], Float32]
+TorchLabels = NDArray[Shape["* batch"], LongDouble]
+# ProcessedDataset =
+
 
 class SignedDataset(Dataset):
-    def __init__(self, X, Y):
-        self.X = X
-        # [n_video, nb_frames, 3, 320, 240]
-        self.Y = Y
-        # [n_video, nb_signes, 1]
+    def __init__(self, data, corpus):
+        self.data = data
+        self.subset_size = 32
+        self.size = len(data)
+        self.loaded_subset = -1
+        self.vocabulary_size = len(np.array(open(corpus).read().splitlines()))
+        model_name_or_path = "google/vit-base-patch16-224-in21k"
+        self.image_preproccesing = ViTFeatureExtractor.from_pretrained(model_name_or_path)
 
-    def __len__(self):
-        return len(self.X)
+    def one_hot_y(
+        self, Y: NDArray[Shape["* nb examples"], UInt]
+    ) -> NDArray[Shape["* nb examples, * vocabulary size"], UInt]:
+        (nb_examples,) = Y.shape
 
-    def __getitem__(self, i):
-        return self.X[i], self.Y[i]
+        one_hot_Y = torch.zeros(nb_examples, self.vocabulary_size)
+        for m in range(nb_examples):
+            one_hot_Y[m, int(Y[m])] = 1
+        return one_hot_Y
+
+    def _load_subset(
+        self, subset: Tuple[List[RawFrameData], List[RawVocabData]]
+    ) -> Tuple[TorchFrames, TorchLabels]:
+        multi_video_frames = []
+        multi_video_signes = []
+        for frames, signes in subset:
+            if not len(frames):
+                continue
+            f = self.image_preproccesing
+            pp_frames = [f(frame, return_tensors="pt")["pixel_values"] for frame in frames]
+            t_frames = torch.cat(pp_frames, dim=0)
+            multi_video_frames.append(t_frames)
+            t_signes = torch.tensor(signes, dtype=torch.long)
+            multi_video_signes.append(t_signes)
+        t_video_frames = torch.cat(multi_video_frames, dim=0)
+        t_video_signes = torch.cat(multi_video_signes, dim=0)
+        return t_video_frames, t_video_signes
+
+    def _get_subset(self, subset_nb: int) -> Tuple[TorchFrames, TorchLabels]:
+        start = self.subset_size * subset_nb
+        end = min(self.size, self.subset_size * (subset_nb + 1))
+        subset = self._load_subset(self.data[start:end])
+        return subset
+
+    def _get_subset_nb(self, i: int) -> int:
+        subset_nb = int(i / self.subset_size)
+        return subset_nb
+
+    def __getitem__(self, i: int) -> Tuple[TorchFrames, TorchLabels]:
+        subset_nb = self._get_subset_nb(i)
+        if subset_nb != self.loaded_subset:
+            self.subset = self._get_subset(subset_nb)
+            self.loaded_subset = subset_nb
+        X, Y = self.subset
+        X_i = X[i % self.subset_size]
+        Y_i = Y[i % self.subset_size]
+        return X_i, Y_i
+
+    def __len__(self) -> int:
+        return self.size
 
 
-class Hand2TextDataModule(LightningDataModule):
+class ViTDataModule(LightningDataModule):
     def __init__(
         self,
         data_dir: str = "data/",
@@ -32,6 +96,7 @@ class Hand2TextDataModule(LightningDataModule):
         pin_memory: bool = False,
         width=320,
         height=240,
+        corpus: str = "/usr/share/dict/words",
     ):
         super().__init__()
 
@@ -57,7 +122,7 @@ class Hand2TextDataModule(LightningDataModule):
         Do not use it to assign state (self.x = y).
         """
         # Cut video to images
-        load_dataset(True)
+        load_dataset(download=True)
         pass
 
     def _print_dataset_shape(self, dataset_name, dataset):
@@ -80,34 +145,12 @@ class Hand2TextDataModule(LightningDataModule):
         # Load dataset
         dataset, words = load_dataset(transform=self.transforms)
 
-        # dataset = [
-        # 	[f_1 + f_2 + f_3], [l_1 + l_2 + l_3]
-        # 	[f_1 + f_2 + f_3], [l_1 + l_2 + l_3]
-        # 	[f_1 + f_2 + f_3], [l_1 + l_2 + l_3]
-        # # ]
-        multi_video_frames = []
-        multi_video_signes = []
-        for frames, signes in dataset:
-            if not len(frames):
-                continue
-            t_frames = torch.stack(frames, dim=0)
-            # print(f"{t_frames.shape = }")
-            multi_video_frames.append(t_frames)
-            # [s1, s2, s3]
-            t_signes = torch.Tensor(signes)
-            # [[s1], [s2], [s3]]
-            # print(f"{t_signes.shape = }")
-            multi_video_signes.append(t_signes)
-
-        t_video_frames = torch.cat(multi_video_frames, dim=0)
-        t_video_signes = torch.cat(multi_video_signes, dim=0)
-
-        self.dataset = SignedDataset(t_video_frames, t_video_signes)
+        self.dataset = SignedDataset(dataset[: self.hparams.batch_size * 4], self.hparams.corpus)
 
         self.words = words
 
-        test_size = int(len(self.dataset) * 0.1)
-        val_size = int(len(self.dataset) * 0.2)
+        test_size = int(len(self.dataset) * 0.25)
+        val_size = int(len(self.dataset) * 0.25)
         train_size = len(self.dataset) - (test_size + val_size)
 
         self._print_dataset_shape("dataset", self.dataset)
@@ -126,7 +169,8 @@ class Hand2TextDataModule(LightningDataModule):
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
-            shuffle=True,
+            shuffle=False,
+            # shuffle=True,
         )
 
     def val_dataloader(self) -> DataLoader:

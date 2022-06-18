@@ -43,6 +43,8 @@ repos:
     rev: 4.0.1
     hooks:
       - id: flake8
+        # Compatibility with NPtyping
+        args: ["--extend-ignore=F722,F821"]
 
   # jupyter notebook cell output clearing
   - repo: https://github.com/kynan/nbstripout

@@ -1,6 +1,8 @@
+# import os
 # import sys
 
-# sys.path.insert(0, "/Users/mcciupek/Documents/42/AI/Hand2Text")
+# ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
+# sys.path.insert(0, ROOT_DIR)
 
 from src.datamodules.how2sign_datamodule import How2SignDataModule
 

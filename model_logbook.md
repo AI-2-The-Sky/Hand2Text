@@ -13,14 +13,15 @@
 # Table of contents
 
 - [Model Logbook](#model-logbook)
-  - [Goal:](#goal)
-  - [Purpose of this document:](#purpose-of-this-document)
+	- [Goal:](#goal)
+	- [Purpose of this document:](#purpose-of-this-document)
 - [Table of contents](#table-of-contents)
-  - [Methodology](#methodology)
-  - [TODOs](#todos)
-  - [Instructions](#instructions)
-  - [Dated logs](#dated-logs)
-    - [\[29/05\] CNN: Simple CNN model](#2905-cnn-simple-cnn-model)
+	- [Methodology](#methodology)
+	- [TODOs](#todos)
+	- [Instructions](#instructions)
+	- [Dated logs](#dated-logs)
+		- [[29/05] ViT](#2905-vit)
+		- [[29/05] CNN: Simple CNN model](#2905-cnn-simple-cnn-model)
 
 
 ## Methodology

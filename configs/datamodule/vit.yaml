@@ -1,0 +1,6 @@
+_target_: src.datamodules.vit_datamodule.ViTDataModule
+
+batch_size: 4
+num_workers: 0
+pin_memory: False
+corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words

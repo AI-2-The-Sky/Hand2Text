@@ -4,11 +4,12 @@ from typing import Any, List
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 from pytorch_lightning import LightningModule
 from torchmetrics import MaxMetric
 from torchmetrics.classification.accuracy import Accuracy
 
-from src.models.components.BlueScore import BleuScore
+from src.utils.BlueScore import BleuScore
 
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
 VOCABULARY = "vocabulary"
@@ -20,15 +21,20 @@ class SimpleCNNModule(LightningModule):
         net: torch.nn.Module,
         lr: float = 0.001,
         weight_decay: float = 0.0005,
+        # corpus: str = "/usr/share/dict/words",
     ):
         super().__init__()
 
         self.save_hyperparameters(logger=False)
 
+        print("WE ARE USING OUR SimpleCNNModule")
         self.net = net
 
         # loss function
         self.criterion = torch.nn.CrossEntropyLoss()
+
+        # self.corpus = np.array(open(corpus).read().splitlines())
+        # self.n = len(self.corpus)
 
         # metrics
         self.train_acc = BleuScore()
@@ -40,9 +46,11 @@ class SimpleCNNModule(LightningModule):
         self.corpus = np.array(open(f"{ROOT_DIR}/data/How2Sign/{VOCABULARY}").read().splitlines())
 
     def forward(self, x: torch.Tensor):
+        # print(f"Forward")
         return self.net(x)
 
     def step(self, batch: Any):
+        # print(f"STEP")
         x, y = batch
         loss = 0
         sentence = np.empty((x.size()[0], x.size()[1]), dtype="<U256")
@@ -57,6 +65,7 @@ class SimpleCNNModule(LightningModule):
         return loss, sentence.tolist(), ground_truth
 
     def training_step(self, batch: Any, batch_idx: int):
+        # print(f"TRAINING STEP")
         loss, preds, targets = self.step(batch)
 
         # log train metrics
@@ -109,8 +118,10 @@ class SimpleCNNModule(LightningModule):
         Normally you'd need one. But in the case of GANs or similar you might have multiple.
 
         See examples here:
-                https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html#configure-optimizers
+                        https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html#configure-optimizers
         """
         return torch.optim.Adam(
-            params=self.parameters(), lr=self.hparams.lr, weight_decay=self.hparams.weight_decay
+            params=self.parameters(),
+            lr=self.hparams.lr,
+            weight_decay=self.hparams.weight_decay,
         )

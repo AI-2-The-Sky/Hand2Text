@@ -117,7 +117,7 @@ class MB3OVRFTDataModule(LightningDataModule):
         Do not use it to assign state (self.x = y).
         """
         # Cut video to images
-        load_dataset(download=True)
+        load_dataset(download=True, overfit=True)
         pass
 
     def _print_dataset_shape(self, dataset_name, dataset):
@@ -143,13 +143,6 @@ class MB3OVRFTDataModule(LightningDataModule):
         self.dataset = SignedDataset(dataset[: self.hparams.batch_size * 4], self.hparams.corpus)
 
         self.words = words
-
-        # test_size = int(len(self.dataset) * 0.25)
-        # val_size = int(len(self.dataset) * 0.25)
-        # train_size = len(self.dataset) - (test_size + val_size)
-        test_size = 3
-        val_size = 3
-        train_size = 3
 
         self._print_dataset_shape("dataset", self.dataset)
         # self.data_train, self.data_test, self.data_val = random_split(

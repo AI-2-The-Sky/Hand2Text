@@ -52,46 +52,17 @@ class SimpleCNNModule(LightningModule):
     def step(self, batch: Any):
         # print(f"STEP")
         x, y = batch
-        # print(f"{x.size() = }")
-        logits = self.forward(x)
-        # print(f"{logits.size() = }")
-        # print(f"{y.size() = }")
-        # 		   [0,   1,  2]
-        # logits = [2]
-        # y = [1]
-        # logits = [.2, .3, .5]
-        # y = 	   [0,   1,  0]
-
-        nb_examples, nb_classes = logits.size()
-        vec_y = y.long()
-
-        # 		   [0,   1,  2]
-        # logits = [2]
-        # y = [1]
-        # logits = [.2, .3, .5]
-        # y = 	   [0,   1,  0]
-
-        # One hot: 1, 3
-        # y = [1, 0, 1, 1, 2]
-        # y = [
-        # 		[0,   1,  0]
-
-        # y = [0] -> [1,   0,  0]
-        # y = [1] -> [0,   1,  0]
-        # y = [2] -> [0,   0,  2]
-        # print(f"{y.size() = }")
-        # print(f"{vec_y.size() = }")
-        # print(f"{vec_y = }")
-        # y_2d = F.one_hot(vec_y.long(), num_classes=nb_classes)
-        # print(f"{y_2d.size() = }")
-        # print(f"{y_2d.type() = }")
-        # print(f"{logits.size() = }")
-        # print(f"{logits.type() = }")
-        # import sys
-        loss = self.criterion(logits, vec_y)
-        preds = torch.argmax(logits, dim=1)
-        # sys.exit(0)
-        return loss, preds, vec_y
+        loss = 0
+        sentence = np.empty((x.size()[0], x.size()[1]), dtype="<U256")
+        for i in range(x.size()[1]):
+            if i == len(y[0]):
+                break
+            logits = self.forward(x[:, i, :, :])
+            loss += self.criterion(logits, y[:, i])
+            preds = self.corpus[torch.argmax(logits, dim=1)]
+            sentence[:, i] = preds
+        ground_truth = [[x] for x in self.corpus[y]]
+        return loss, sentence.tolist(), ground_truth
 
     def training_step(self, batch: Any, batch_idx: int):
         # print(f"TRAINING STEP")

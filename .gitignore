@@ -170,8 +170,15 @@ outputs
 /data/MNIST
 /data/external
 /data/interim
+
+# dvc
 /data/H2T/*
 !/data/H2T/*.dvc
+
 /data/How2Sign/*
 !/data/How2Sign/*.dvc
+
 !logs/*.dvc
+
+# Other
+.DS_Store

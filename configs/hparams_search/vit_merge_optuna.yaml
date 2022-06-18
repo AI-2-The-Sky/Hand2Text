@@ -1,0 +1,73 @@
+# @package _global_
+
+# example hyperparameter optimization of some experiment with Optuna:
+# python train.py -m hparams_search=mnist_optuna experiment=example
+
+defaults:
+  - override /hydra/sweeper: optuna
+  - override /hydra/sweeper/sampler: tpe
+  # - override /datamodule/lstm_preprocessing: embed
+
+# choose metric which will be optimized by Optuna
+# make sure this is the correct name of some metric logged in lightning module!
+optimized_metric: "train/acc"
+
+# here we define Optuna hyperparameter search
+# it optimizes for value returned from function with @hydra.main decorator
+# docs: https://hydra.cc/docs/next/plugins/optuna_sweeper
+hydra:
+  sweeper:
+    _target_: hydra_plugins.hydra_optuna_sweeper.optuna_sweeper.OptunaSweeper
+
+    # storage URL to persist optimization results
+    # for example, you can use SQLite if you set 'sqlite:///example.db'
+    storage: null
+
+    # name of the study to persist optimization results
+    study_name: null
+
+    # number of parallel workers
+    n_jobs: 1
+
+    # 'minimize' or 'maximize' the objective
+    direction: maximize
+
+    # total number of runs that will be executed
+    n_trials: 20
+
+    # choose Optuna hyperparameter sampler
+    # docs: https://optuna.readthedocs.io/en/stable/reference/samplers.html
+    sampler:
+      _target_: optuna.samplers.TPESampler
+      seed: 12345
+      n_startup_trials: 10 # number of random sampling runs before optimization starts
+
+    # define range of hyperparameters
+    search_space:
+      model.lr:
+        type: float
+        low: 1e-6
+        high: 1e-2
+        log: true
+      model.weight_decay:
+        type: float
+        low: 1e-9
+        high: 1e-2
+        log: true
+      model.net.n_layers:
+        type: int
+        low: 1
+        high: 10
+      model.net.H_output_size:
+        type: int
+        low: 15
+        high: 60
+      model.net.dropout:
+        type: float
+        low: 0.
+        high: 0.8
+        # type: categorical
+        # choices: [16, 32, 64]
+
+# datamodule.max_size_dataset=16384
+name: "vit_merge_overfit_small"

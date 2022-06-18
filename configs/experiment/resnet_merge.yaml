@@ -5,23 +5,23 @@
 
 defaults:
   - override /datamodule: vit.yaml
-  - override /model: vit.yaml
-  - override /callbacks: custom.yaml
+  - override /model: resnet.yaml
+  - override /callbacks: default.yaml
   - override /trainer: default.yaml
-  - override /model/net: vit.yaml
+  - override /model/net: resnet.yaml
   - override /logger: many_loggers.yaml
 
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-name: "vit_merge"
+name: "resnet_merge"
 
 seed: 12345
 
-trainer:
-  min_epochs: 1
-  max_epochs: 100
+# trainer:
+#   min_epochs: 1
+#   max_epochs: 2
 #   gradient_clip_val: 0.5
 
 # model:
@@ -34,7 +34,7 @@ trainer:
 #   net:
 
 datamodule:
-  batch_size: 4
+  batch_size: 16
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

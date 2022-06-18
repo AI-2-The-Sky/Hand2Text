@@ -54,9 +54,7 @@ timm
 # --------- hydra --------- #
 hydra-core>=1.1.0
 hydra-colorlog>=1.1.0
-# hydra-optuna-sweeper==1.1.0
-hydra-optuna-sweeper==1.2.0
-# hydra-optuna-sweeper<=1.1.0,>1.3.0
+hydra-optuna-sweeper>=1.1.0
 omegaconf
 
 # ---- computer-vision ---- #
@@ -64,7 +62,7 @@ opencv-python>=4.5.5.64
 
 # --------- basics --------- #
 numpy
-nptyping==2.1.1
+nptyping
 transformers
 pandas
 Pillow==9.0.1

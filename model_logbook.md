@@ -38,11 +38,11 @@
 
 ## TODOs
 
-| Value | Time (H) | Label  |                                                                                                   Description | State |
-| :---- | :------- | :----: | ------------------------------------------------------------------------------------------------------------: | ----: |
-| 75    | 1        | Doc    |                                                                                                       Logbook |   [x] |
-| 70-80 | 4        | Model  |                                                                                                           ViT |   [ ] |
-| 80    | 2        | Train  |                                                                                 Train simple cnn on one epoch |   [ ] |
+| Value | Time (H) | Label |                   Description | State |
+| :---- | :------- | :---: | ----------------------------: | ----: |
+| 75    | 1        |  Doc  |                       Logbook |   [x] |
+| 70-80 | 4        | Model |                           ViT |   [ ] |
+| 80    | 2        | Train | Train simple cnn on one epoch |   [ ] |
 
 
 ## Instructions
@@ -66,6 +66,35 @@ Inspiration from [OPT-175B Logbook](https://github.com/facebookresearch/metaseq/
 
 
 ## Dated logs
+
+
+### [29/05] ViT
+
+Context:
+ - First train on 800 videos
+
+Action:
+ - On 800 videos 3 trains with 2 ResNet & 1 ViT
+ - Dataset of 800 videos/vocabulary
+ - Command:
+```sh
+python train.py experiment=vit_merge
+```
+
+Results:
+
+Accuracy
+| Model  | Metric   | Train | Validation |
+| ------ | -------- | ----- | ---------- |
+| ViT    | Accuracy | 0.40  | 0.25       |
+| ResNet | Accuracy | 0.063 | 0.0        |
+
+
+Next Step:
+ - Do an overfit on 3 images from 3 different videos (interesting to make a dataset)
+ - Make a pipeline for BLEU_SCORE
+
+
 
 
 ### [29/05] CNN: Simple CNN model

@@ -19,6 +19,8 @@ class ViTBaselineModel(nn.Module):
         self.vocabulary_size = len(np.array(open(corpus).read().splitlines()))
 
         self.pretrained_vit = ViTModel.from_pretrained("google/vit-base-patch16-224-in21k")
+
+        # Dropout off and batchnorm can take variable size of inputs
         self.pretrained_vit.eval()
 
         self.conv_1d_1 = torch.nn.Conv1d(

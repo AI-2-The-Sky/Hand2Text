@@ -6,7 +6,7 @@
 defaults:
   - override /datamodule: vit.yaml
   - override /model: vit.yaml
-  - override /callbacks: custom.yaml
+  - override /callbacks: ckpt_loss.yaml
   - override /trainer: default.yaml
   - override /model/net: vit.yaml
   - override /logger: many_loggers.yaml
@@ -35,6 +35,9 @@ trainer:
 
 datamodule:
   batch_size: 4
+
+model:
+  lr: 1e-4
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

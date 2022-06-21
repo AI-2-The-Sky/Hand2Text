@@ -27,23 +27,26 @@ class BaseSquareNet(pl.LightningModule):
             H_output_size=100,
             num_layers=1,
             dropout=0,
-            corpus="/usr/share/dict/words",
+            corpus=corpus,
         )
 
     def forward(
         self, x: NDArray[Shape["* batch, 224, 224, 3"], Float32]
     ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
-        print(f"{x.shape = }")
-        x_seq = []
-        for i in range(self.hparams.sequence_size):
-            x = self.image_feature_extractr(x)
-            print(f"{x.shape = }")
-            b, f = x.shape
-            x = x.view((b, 1, f))
-            print(f"{x.shape = }")
-            x_seq.append(x)
-        x_seq = torch.cat(x_seq, dim=1)
-        print(f"{x.shape = }")
+        # x_seq = []
+        # for i in range(self.hparams.sequence_size):
+        #     print(f"{x.shape = }")
+        #     b, f = x.shape
+        #     x = x.view((b, 1, f))
+        #     print(f"{x.shape = }")
+        #     x_seq.append(x)
+        # x_seq = torch.cat(x_seq, dim=1)
+        # print(f"In: {x.shape = }")
+        x = self.image_feature_extractr(x)
+        # print(f"Vit: {x.shape = }")/
+        b, f = x.shape
+        x_seq = x.view(1, b, f)
+        # print(f"View: {x_seq.shape = }")
         x = self.recurrent_translator(x_seq)
-        print(f"{x.shape = }")
+        # print(f"gru: {x.shape = }")
         return x

@@ -1,4 +1,5 @@
 _target_: src.models.components.baseline.BaseSquareNet.BaseSquareNet
 
-corpus: ${hydra:runtime.cwd}/data/How2Sign/vocabulary
+# corpus: ${hydra:runtime.cwd}/data/How2Sign/vocabulary
+corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words
 sequence_size: 16

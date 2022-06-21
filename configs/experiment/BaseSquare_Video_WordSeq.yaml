@@ -8,7 +8,7 @@ defaults:
   - override /callbacks: custom.yaml
   - override /trainer: default.yaml
 
-  - override /model: vit.yaml
+  - override /model: CategorySingle_PredictionSequence_trainer.yaml
   - override /model/net: BaseSquareNet.yaml
   - override /logger: many_loggers.yaml
 
@@ -35,7 +35,7 @@ model:
 #   net:
 
 datamodule:
-  batch_size: 2
+  batch_size: 8
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

@@ -34,10 +34,15 @@ class GRU_Translator(pl.LightningModule):
         self.softmax = nn.Softmax(dim=2)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
-        X = self.layer_gru(X)
+        # print(f"gru: {X.shape = }")
+        X, hidden = self.layer_gru(X)
+        # print(f"gru: {X.shape = }")
         X = self.layer_1_dense(X)
         X = self.layer_1_relu(X)
+        # print(f"gru: {X.shape = }")
         X = self.layer_2_dense(X)
         X = self.layer_2_relu(X)
+        # print(f"gru: {X.shape = }")
         X = self.softmax(X)
+        # print(f"gru: {X.shape = }")
         return X

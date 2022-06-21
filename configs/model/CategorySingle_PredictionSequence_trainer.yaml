@@ -1,0 +1,9 @@
+# _target_: DraftOptimizer.models.embedding_module.EmbeddingLitModule
+_target_: src.models.CategorySingle_PredictionSequence_trainer.CategorySingle_PredictionSequence_LitModule
+
+lr: 1e-3
+weight_decay: 5e-4
+corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words
+
+defaults:
+  - net: BaseSquareNet

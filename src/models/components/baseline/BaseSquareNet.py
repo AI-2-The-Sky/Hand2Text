@@ -5,6 +5,9 @@ import pytorch_lightning as pl
 import torch
 from nptyping import Float32, NDArray, Number, Shape, UInt
 
+from src.models.components.baseline.ImageFeatureExtractor.ResNet_FeatureExtractor import (
+    ResNet_FeatureExtractor,
+)
 from src.models.components.baseline.ImageFeatureExtractor.ViT_FeatureExtractor import (
     ViT_FeatureExtractor,
 )
@@ -21,7 +24,8 @@ class BaseSquareNet(pl.LightningModule):
         self.save_hyperparameters()
 
         self.vocabulary_size = len(np.array(open(corpus).read().splitlines()))
-        self.image_feature_extractr = ViT_FeatureExtractor(corpus)
+        # self.image_feature_extractr = ViT_FeatureExtractor(corpus)
+        self.image_feature_extractr = ResNet_FeatureExtractor(corpus)
         self.recurrent_translator = GRU_Translator(
             H_input_size=764,
             H_output_size=100,

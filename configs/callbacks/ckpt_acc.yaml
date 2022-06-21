@@ -1,0 +1,10 @@
+defaults:
+  - ckpt.yaml
+
+model_checkpoint:
+  monitor: "val/acc" # name of the logged metric which determines when model is improving
+  mode: "max" # "max" means higher metric value is better, can be also "min"
+
+early_stopping:
+  monitor: "val/acc" # name of the logged metric which determines when model is improving
+  mode: "max" # "max" means higher metric value is better, can be also "min"

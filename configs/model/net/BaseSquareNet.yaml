@@ -1,0 +1,4 @@
+_target_: src.models.components.baseline.BaseSquareNet.BaseSquareNet
+
+corpus: ${hydra:runtime.cwd}/data/How2Sign/vocabulary
+sequence_size: 16

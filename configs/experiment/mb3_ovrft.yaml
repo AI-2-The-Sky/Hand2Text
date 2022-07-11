@@ -4,7 +4,7 @@
 # python train.py experiment=example
 
 defaults:
-  - override /datamodule: mb3_ovrft.yaml
+  - override /datamodule: vit.yaml
   - override /model: vit.yaml
   - override /callbacks: default.yaml
   - override /trainer: default.yaml
@@ -34,7 +34,10 @@ seed: 12345
 #   net:
 
 datamodule:
-  batch_size: 3
+  batch_size: 2
+
+model:
+  lr: 0.002
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

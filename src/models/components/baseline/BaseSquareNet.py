@@ -25,7 +25,7 @@ class BaseSquareNet(pl.LightningModule):
 
         self.vocabulary_size = len(np.array(open(corpus).read().splitlines()))
         # self.image_feature_extractr = ViT_FeatureExtractor(corpus)
-        self.image_feature_extractr = ResNet_FeatureExtractor(corpus)
+        self.image_feature_extractr = ViT_FeatureExtractor(corpus)
         self.recurrent_translator = GRU_Translator(
             H_input_size=764,
             H_output_size=100,
@@ -47,7 +47,7 @@ class BaseSquareNet(pl.LightningModule):
         # x_seq = torch.cat(x_seq, dim=1)
         # print(f"In: {x.shape = }")
         x = self.image_feature_extractr(x)
-        # print(f"Vit: {x.shape = }")/
+        # print(f"Vit: {x.shape = }")
         b, f = x.shape
         x_seq = x.view(1, b, f)
         # print(f"View: {x_seq.shape = }")

@@ -6,8 +6,8 @@ defaults:
   - default.yaml
 
 trainer:
-  max_epochs: 1000
-  overfit_batches: 3
+  max_epochs: 50
+  overfit_batches: 1
 
 callbacks:
   model_checkpoint:

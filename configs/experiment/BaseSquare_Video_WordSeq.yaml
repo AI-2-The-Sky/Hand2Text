@@ -26,7 +26,7 @@ trainer:
 #   gradient_clip_val: 0.5
 
 model:
-  lr: 0.002
+  lr: 1e-1
 #   net:
 #     simple_cnn.yaml
 
@@ -35,7 +35,7 @@ model:
 #   net:
 
 datamodule:
-  batch_size: 8
+  batch_size: 2
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

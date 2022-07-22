@@ -4,11 +4,11 @@
 # python train.py experiment=example
 
 defaults:
-  - override /datamodule: vit.yaml
+  - override /datamodule: hand2textvit.yaml
   - override /callbacks: custom.yaml
   - override /trainer: default.yaml
 
-  - override /model: CategorySingle_PredictionSequence_trainer.yaml
+  - override /model: BaseSquare.yaml
   - override /model/net: BaseSquareNet.yaml
   - override /logger: many_loggers.yaml
 
@@ -16,9 +16,9 @@ defaults:
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-name: "vit_merge"
+name: "basesquare_test"
 
-seed: 12345
+seed: 6
 
 trainer:
   min_epochs: 1
@@ -26,7 +26,7 @@ trainer:
 #   gradient_clip_val: 0.5
 
 model:
-  lr: 1e-1
+  lr: 1e-3
 #   net:
 #     simple_cnn.yaml
 

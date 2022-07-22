@@ -5,6 +5,7 @@ import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import ConcatDataset, DataLoader, Dataset, random_split
 from torchvision.transforms import transforms
+from src.models.components.baseline.ImageFeatureExtractor.ViTFeatureExtractor import ViTFeatureExtractor
 
 from data.video_to_image import frame_meta_to_label, load_dataset
 
@@ -23,11 +24,12 @@ class SignedDataset(Dataset):
         return self.X[i], self.Y[i]
 
 
-class Hand2TextDataModule(LightningDataModule):
+class Hand2TextViTDataModule(LightningDataModule):
     def __init__(
         self,
         data_dir: str = "data/",
         batch_size: int = 64,
+        seq_size: int = 2,
         num_workers: int = 0,
         pin_memory: bool = False,
         width=224,
@@ -37,6 +39,10 @@ class Hand2TextDataModule(LightningDataModule):
 
         # this line allows to access init params with 'self.hparams' attribute
         self.save_hyperparameters(logger=False)
+        self.batch_size = batch_size
+        self.seq_size = seq_size
+
+        self.feature_extractor = ViTFeatureExtractor(batch_size=batch_size, seq_size=seq_size)
 
         # data transformations
         self.transforms = transforms.Compose(
@@ -101,8 +107,10 @@ class Hand2TextDataModule(LightningDataModule):
 
         t_video_frames = torch.cat(multi_video_frames, dim=0)
         t_video_signes = torch.cat(multi_video_signes, dim=0)
-
-        self.dataset = SignedDataset(t_video_frames, t_video_signes)
+        t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
+        
+        print(t_video_features[0].shape)
+        self.dataset = SignedDataset(t_video_features, t_video_signes)
 
         self.words = words
 

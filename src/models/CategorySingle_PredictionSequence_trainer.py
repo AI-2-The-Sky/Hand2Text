@@ -73,10 +73,10 @@ class CategorySingle_PredictionSequence_LitModule(LightningModule):
         # print(f"{x.shape = }")
         # print(f"{y.shape = }")
 
-        y = y.view(1, -1)
-        # print(f"{y.shape = }")
+        # y = y.view(1, -1)
+        # # print(f"{y.shape = }")
         logits = self.forward(x)
-        logits = torch.moveaxis(logits, 1, 2)
+        # logits = torch.moveaxis(logits, 1, 2)
         # print(f"{logits.shape = }")
         loss = self.criterion(logits, y)
         return loss, logits, y

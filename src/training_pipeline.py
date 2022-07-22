@@ -88,7 +88,6 @@ def train(config: DictConfig) -> Optional[float]:
     if config.get("train"):
         log.info("Starting training!")
         trainer.fit(model=model, datamodule=datamodule)
-
     # Get metric score for hyperparameter optimization
     optimized_metric = config.get("optimized_metric")
     if optimized_metric and optimized_metric not in trainer.callback_metrics:

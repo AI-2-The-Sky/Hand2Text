@@ -1,0 +1,8 @@
+_target_: src.datamodules.hand2text_vit_datamodule.Hand2TextViTDataModule
+
+batch_size: 2
+seq_size: 2
+num_workers: 0
+pin_memory: False
+width: 224
+height: 224

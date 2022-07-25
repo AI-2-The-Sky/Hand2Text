@@ -42,7 +42,6 @@ class ViT_FeatureExtractor(pl.LightningModule):
             b, f = vit_feat.size()
             vit_feat = torch.reshape(vit_feat, (self.batch_size, self.seq_size, f))
         return vit_feat
-
     def forward(
         self,
         vit_feat,

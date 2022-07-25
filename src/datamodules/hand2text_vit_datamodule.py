@@ -5,9 +5,11 @@ import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import ConcatDataset, DataLoader, Dataset, random_split
 from torchvision.transforms import transforms
-from src.models.components.baseline.ImageFeatureExtractor.ViTFeatureExtractor import ViTFeatureExtractor
 
 from data.video_to_image import frame_meta_to_label, load_dataset
+from src.models.components.baseline.ImageFeatureExtractor.ViT_FeatureExtractor import (
+    ViT_FeatureExtractor,
+)
 
 
 class SignedDataset(Dataset):
@@ -42,7 +44,7 @@ class Hand2TextViTDataModule(LightningDataModule):
         self.batch_size = batch_size
         self.seq_size = seq_size
 
-        self.feature_extractor = ViTFeatureExtractor(batch_size=batch_size, seq_size=seq_size)
+        self.feature_extractor = ViT_FeatureExtractor(batch_size=batch_size, seq_size=seq_size)
 
         # data transformations
         self.transforms = transforms.Compose(
@@ -107,8 +109,9 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         t_video_frames = torch.cat(multi_video_frames, dim=0)
         t_video_signes = torch.cat(multi_video_signes, dim=0)
+
         t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
-        
+
         print(t_video_features[0].shape)
         self.dataset = SignedDataset(t_video_features, t_video_signes)
 

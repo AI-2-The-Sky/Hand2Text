@@ -11,10 +11,10 @@ from nptyping import Float32, NDArray, Number, Shape, UInt
 # 	ResNet_FeatureExtractor,
 # )
 # )
-from src.models.components.baseline.ImageFeatureExtractor.ViT_FeatureExtractor import (
-    ViT_FeatureExtractor,
+from src.models.components.baseline.ImageFeatureExtractor.ViTFeatureExtractor import (
+    ViTFeatureExtractor,
 )
-from src.models.components.baseline.RecurrentTranslator.GRU_Translator import GRU_Translator
+from src.models.components.baseline.RecurrentTranslator.GRUTranslator import GRUTranslator
 
 
 class BaseSquareNet(pl.LightningModule):
@@ -28,20 +28,25 @@ class BaseSquareNet(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
 
+        self.vocabulary_size = 1999
         self.batch_size = batch_size
-        self.nb_seq_sizebatch = seq_size
-        # self.image_feature_extractr = ViT_FeatureExtractor(
-        # 	nb_classes=nb_classes,
-        # 	batch_size=batch_size,
-        # 	seq_size=seq_size
-        # )
-        self.recurrent_translator = GRU_Translator(
-            nb_classes=nb_classes, H_input_size=h_in, num_layers=1, dropout=0
+        self.seq_size = seq_size
+        self.nb_classes = nb_classes
+        self.h_in = h_in
+
+        # self.image_feature_extractor = ViTFeatureExtractor(nb_classes=nb_classes, batch_size=batch_size, seq_size=seq_size)
+        self.recurrent_translator = GRUTranslator(
+            nb_classes=self.nb_classes,
+            H_input_size=self.h_in,
+            H_output_size=100,
+            num_layers=1,
+            dropout=0,
         )
 
     def forward(
         self, x: NDArray[Shape["* batch, 224, 224, 3"], Float32]
-    ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
-        # print(f"{x.shape=}")
+    ) -> NDArray[Shape["* batch, * seq, * vocab size"], Float32]:
+
+        # x = self.image_feature_extractor.vit_extract_features(x)
         x = self.recurrent_translator(x)
         return x

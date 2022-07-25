@@ -7,8 +7,8 @@ from torch.utils.data import ConcatDataset, DataLoader, Dataset, random_split
 from torchvision.transforms import transforms
 
 from data.video_to_image import frame_meta_to_label, load_dataset
-from src.models.components.baseline.ImageFeatureExtractor.ViT_FeatureExtractor import (
-    ViT_FeatureExtractor,
+from src.models.components.baseline.ImageFeatureExtractor.ViTFeatureExtractor import (
+    ViTFeatureExtractor,
 )
 
 

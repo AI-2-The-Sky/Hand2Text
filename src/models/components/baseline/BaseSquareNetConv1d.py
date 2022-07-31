@@ -1,3 +1,4 @@
+from asyncio import open_unix_connection
 import imp
 from typing import List
 
@@ -10,6 +11,8 @@ from src.models.components.baseline.ImageFeatureExtractor.ViT_Conv1d_FeatureExtr
     ViT_Conv1d_FeatureExtractor,
 )
 from src.models.components.baseline.RecurrentTranslator.GRU_Translator import GRU_Translator
+
+from src.models.components.baseline.ImageFeatureExtractor.Dimensionality_Reductor import Dimensionality_Reductor
 
 
 class BaseSquareNetConv1d(pl.LightningModule):
@@ -24,12 +27,7 @@ class BaseSquareNetConv1d(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
 
-        self.image_feature_extractor = ViT_Conv1d_FeatureExtractor(
-            nb_classes=self.hparams.nb_classes,
-            batch_size=self.hparams.batch_size,
-            seq_size=self.hparams.seq_size,
-            out_features=self.hparams.k_features,
-        )
+        self.dimensionality_reductor = Dimensionality_Reductor(out_features=self.hparams.k_features)
         self.recurrent_translator = GRU_Translator(
             nb_classes=nb_classes, H_input_size=h_in, num_layers=1, dropout=0
         )
@@ -40,7 +38,7 @@ class BaseSquareNetConv1d(pl.LightningModule):
         b, s, k, f = x.size()
         x = x.view(b * s, k, f)
 
-        x = self.image_feature_extractor(x)
+        x = self.dimensionality_reductor(x)
 
         b = self.hparams.batch_size
         s = self.hparams.seq_size

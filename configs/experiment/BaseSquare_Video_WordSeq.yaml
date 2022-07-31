@@ -2,7 +2,6 @@
 
 # to execute this experiment run:
 # python train.py experiment=example
-
 defaults:
   - override /datamodule: hand2textvit.yaml
   - override /callbacks: custom.yaml

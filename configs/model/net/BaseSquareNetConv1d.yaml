@@ -1,0 +1,9 @@
+_target_: src.models.components.baseline.BaseSquareNetConv1d.BaseSquareNetConv1d
+
+# # corpus: ${hydra:runtime.cwd}/data/How2Sign/vocabulary
+# corpus: ${hydra:runtime.cwd}/data/H2T/wlasl_words
+batch_size: 2
+seq_size: 2
+nb_classes: 1999
+h_in: 64
+k_features: 64

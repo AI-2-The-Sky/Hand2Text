@@ -8,15 +8,15 @@ defaults:
   - override /callbacks: custom.yaml
   - override /trainer: default.yaml
 
-  - override /model: BaseSquare.yaml
-  - override /model/net: BaseSquareNet.yaml
+  - override /model: BaseSquareConv1d.yaml
+  - override /model/net: BaseSquareNetConv1d.yaml
   - override /logger: many_loggers.yaml
 
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-name: "basesquare_test"
+name: "basesquareconv1d_test"
 
 seed: 6
 
@@ -26,7 +26,7 @@ trainer:
 #   gradient_clip_val: 0.5
 
 model:
-  lr: 1e-3
+  lr: 5e-4
 #   net:
 #     simple_cnn.yaml
 

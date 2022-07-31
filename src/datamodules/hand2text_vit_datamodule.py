@@ -7,8 +7,8 @@ from torch.utils.data import ConcatDataset, DataLoader, Dataset, random_split
 from torchvision.transforms import transforms
 
 from data.video_to_image import frame_meta_to_label, load_dataset
-from src.models.components.baseline.ImageFeatureExtractor.ViTFeatureExtractor import (
-    ViTFeatureExtractor,
+from src.models.components.baseline.ImageFeatureExtractor.ViT_Conv1d_FeatureExtractor import (
+    ViT_Conv1d_FeatureExtractor,
 )
 
 
@@ -32,6 +32,8 @@ class Hand2TextViTDataModule(LightningDataModule):
         data_dir: str = "data/",
         batch_size: int = 64,
         seq_size: int = 2,
+        nb_classes: int = 10,
+        out_features: int = 64,
         num_workers: int = 0,
         pin_memory: bool = False,
         width=224,
@@ -44,7 +46,12 @@ class Hand2TextViTDataModule(LightningDataModule):
         self.batch_size = batch_size
         self.seq_size = seq_size
 
-        self.feature_extractor = ViT_FeatureExtractor(batch_size=batch_size, seq_size=seq_size)
+        self.feature_extractor = ViT_Conv1d_FeatureExtractor(
+            nb_classes=self.hparams.nb_classes,
+            batch_size=batch_size,
+            seq_size=seq_size,
+            out_features=self.hparams.out_features,
+        )
 
         # data transformations
         self.transforms = transforms.Compose(
@@ -134,7 +141,7 @@ class Hand2TextViTDataModule(LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.data_train,
-            batch_size=self.hparams.batch_size,
+            batch_size=self.hparams.batch_size * self.hparams.seq_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=True,
@@ -143,7 +150,7 @@ class Hand2TextViTDataModule(LightningDataModule):
     def val_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.data_val,
-            batch_size=self.hparams.batch_size,
+            batch_size=self.hparams.batch_size * self.hparams.seq_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=False,
@@ -152,7 +159,7 @@ class Hand2TextViTDataModule(LightningDataModule):
     def test_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.data_test,
-            batch_size=self.hparams.batch_size,
+            batch_size=self.hparams.batch_size * self.hparams.seq_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=False,

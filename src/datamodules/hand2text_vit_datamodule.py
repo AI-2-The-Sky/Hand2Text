@@ -13,19 +13,24 @@ from src.models.components.baseline.ImageFeatureExtractor.ViT_Conv1d_FeatureExtr
 
 
 class SignedDataset(Dataset):
-    def __init__(self, X, Y, vit):
+    def __init__(self, X, Y, vit, seq_size):
         self.X = X
         # [n_video, nb_frames, 3, 320, 240]
         self.Y = Y
         # [n_video, nb_signes, 1]
         self.vit = vit
+        self.seq_size = seq_size
 
     def __len__(self):
         return len(self.X)
 
     def __getitem__(self, i):
-        return self.vit(self.X[i]), self.Y[i]
-
+        x_idx_a = self.seq_size *  i
+        x_idx_z = self.seq_size * (i+1)
+        batch_X = self.X[x_idx_a:x_idx_z]
+		
+        batch_Y = self.Y[i]
+        return self.vit(batch_X), batch_Y
 
 class Hand2TextViTDataModule(LightningDataModule):
     def __init__(
@@ -120,12 +125,13 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         # t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
 
-        # print(t_video_features[0].shape)
-        self.dataset = SignedDataset(t_video_frames, t_video_signes, self.feature_extractor)
+        print(t_frames[0].shape)
+        a = self.feature_extractor.vit_extract_features
+        self.dataset = SignedDataset(t_frames, t_video_signes, a, self.seq_size)
 
         self.words = words
 
-        test_size = int(len(self.dataset) * 0.1)
+        test_size = int(len(self.dataset) * 0.2)
         val_size = int(len(self.dataset) * 0.2)
         train_size = len(self.dataset) - (test_size + val_size)
 

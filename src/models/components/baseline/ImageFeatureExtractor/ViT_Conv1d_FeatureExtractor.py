@@ -43,6 +43,7 @@ class ViT_Conv1d_FeatureExtractor(pl.LightningModule):
     ):
     # ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
         # print("---VIT FORWARD---")
+        
         x = self.conv_1d_1(vit_feat)
         x = self.layer_1_relu(x)
         x = torch.squeeze(x, dim=2)

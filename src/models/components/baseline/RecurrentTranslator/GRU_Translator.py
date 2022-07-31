@@ -3,7 +3,8 @@ from typing import List
 import numpy as np
 import pytorch_lightning as pl
 import torch
-from nptyping import Float32, NDArray, Number, Shape, UInt
+from nptyping import Float32, NDArray, Number, UInt
+# from nptyping import Float32, NDArray, Number, Shape, UInt
 from torch import nn
 
 # class GRU_Translator(pl.LightningModule):

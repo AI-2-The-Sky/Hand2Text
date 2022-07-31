@@ -13,17 +13,18 @@ from src.models.components.baseline.ImageFeatureExtractor.ViT_Conv1d_FeatureExtr
 
 
 class SignedDataset(Dataset):
-    def __init__(self, X, Y):
+    def __init__(self, X, Y, vit):
         self.X = X
         # [n_video, nb_frames, 3, 320, 240]
         self.Y = Y
         # [n_video, nb_signes, 1]
+        self.vit = vit
 
     def __len__(self):
         return len(self.X)
 
     def __getitem__(self, i):
-        return self.X[i], self.Y[i]
+        return self.vit(self.X[i]), self.Y[i]
 
 
 class Hand2TextViTDataModule(LightningDataModule):
@@ -117,10 +118,10 @@ class Hand2TextViTDataModule(LightningDataModule):
         t_video_frames = torch.cat(multi_video_frames, dim=0)
         t_video_signes = torch.cat(multi_video_signes, dim=0)
 
-        t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
+        # t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
 
-        print(t_video_features[0].shape)
-        self.dataset = SignedDataset(t_video_features, t_video_signes)
+        # print(t_video_features[0].shape)
+        self.dataset = SignedDataset(t_video_frames, t_video_signes, self.feature_extractor)
 
         self.words = words
 

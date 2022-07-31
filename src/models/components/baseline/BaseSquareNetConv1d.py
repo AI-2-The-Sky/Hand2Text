@@ -4,7 +4,8 @@ from typing import List
 import numpy as np
 import pytorch_lightning as pl
 import torch
-from nptyping import Float32, NDArray, Number, Shape, UInt
+# from nptyping import Float32, NDArray, Number, Shape, UInt
+from nptyping import Float32, NDArray, Number, UInt
 
 from src.models.components.baseline.ImageFeatureExtractor.ViT_Conv1d_FeatureExtractor import (
     ViT_Conv1d_FeatureExtractor,
@@ -34,9 +35,12 @@ class BaseSquareNetConv1d(pl.LightningModule):
             nb_classes=nb_classes, H_input_size=h_in, num_layers=1, dropout=0
         )
 
+    # def forward(
+    #     self, x: NDArray[Shape["* batch, 224, 224, 3"], Float32]
+    # ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
     def forward(
-        self, x: NDArray[Shape["* batch, 224, 224, 3"], Float32]
-    ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
+        self, x
+    ):
         b, s, k, f = x.size()
         x = x.view(b * s, k, f)
 

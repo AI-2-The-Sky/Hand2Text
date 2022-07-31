@@ -27,6 +27,13 @@ class BaseSquareNetConv1d(pl.LightningModule):
         super().__init__()
         self.save_hyperparameters()
 
+        self.vit = ViT_Conv1d_FeatureExtractor(
+            nb_classes=self.hparams.nb_classes,
+            batch_size=self.hparams.batch_size,
+            seq_size=self.hparams.seq_size,
+            out_features=self.hparams.k_features
+        )
+
         self.dimensionality_reductor = Dimensionality_Reductor(out_features=self.hparams.k_features)
         self.recurrent_translator = GRU_Translator(
             nb_classes=nb_classes, H_input_size=h_in, num_layers=1, dropout=0
@@ -35,6 +42,9 @@ class BaseSquareNetConv1d(pl.LightningModule):
     def forward(
         self, x: NDArray[Shape["* batch, 224, 224, 3"], Float32]
     ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
+        # print(f"before vit {x.shape=}")
+        # x = self.vit.vit_extract_features(x)
+        # print(f"after vit:{x.shape=}")
         b, s, k, f = x.size()
         x = x.view(b * s, k, f)
 

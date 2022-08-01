@@ -31,7 +31,7 @@ class SignedDataset(Dataset):
         x_idx_z = self.seq_size * (i + 1)
         # print(f'[{i}]: {x_idx_a=}, {x_idx_z=}')
         batch_X = self.X[x_idx_a:x_idx_z]
-        batch_Y = self.Y[i]
+        batch_Y = self.Y[x_idx_a:x_idx_z]
         # print(batch_Y)
         return batch_X, batch_Y
 
@@ -93,7 +93,7 @@ class Hand2TextViTDataModule(LightningDataModule):
             X, y = dataset[i]
             print(f"{' ' * 4 * 2}X[{i}]: {X.shape}")
             print(f"{' ' * 4 * 2}Y[{i}]: {y.shape}")
-            print(f" ")
+            print(" ")
             break
 
     def setup(self, stage: Optional[str] = None) -> None:
@@ -132,8 +132,10 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         # t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
 
-        print(f'{t_frames[0].shape =}')
-        self.dataset = SignedDataset(t_frames, t_video_signes, self.feature_extractor.vit_extract_features, self.seq_size)
+        print(f"{t_frames[0].shape =}")
+        self.dataset = SignedDataset(
+            t_frames, t_video_signes, self.feature_extractor.vit_extract_features, self.seq_size
+        )
 
         self.words = words
 

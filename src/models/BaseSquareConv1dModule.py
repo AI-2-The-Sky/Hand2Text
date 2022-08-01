@@ -35,6 +35,8 @@ class BaseSquareConv1dModule(LightningModule):
     def step(self, batch: Any):
         x, y = batch
         logits = self.forward(x)
+        y = y.long()
+        logits = torch.moveaxis(logits, (1,), (2,))
         loss = self.criterion(logits, y)
         preds = torch.argmax(logits, dim=1)
         return loss, preds, y

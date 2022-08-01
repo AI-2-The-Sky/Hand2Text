@@ -8,15 +8,13 @@ from src.datamodules.hand2text_vit_datamodule import Hand2TextViTDataModule
 from src.models.components.baseline.BaseSquareNetConv1d import BaseSquareNetConv1d
 
 if __name__ == "__main__":
-    
+
     batch_size = 3
     seq_size = 2
 
     datamodule = Hand2TextViTDataModule(batch_size=batch_size)
 
-    assert (
-        not datamodule.data_train and not datamodule.data_val and not datamodule.data_test
-    )
+    assert not datamodule.data_train and not datamodule.data_val and not datamodule.data_test
 
     datamodule.setup()
 
@@ -30,15 +28,15 @@ if __name__ == "__main__":
 
     x, y = batch
 
-    print(f'{x.shape = }')
-    print(f'{y.shape = }')
+    print(f"{x.shape = }")
+    print(f"{y.shape = }")
 
     model = BaseSquareNetConv1d(batch_size=batch_size, seq_size=seq_size, k_features=10)
 
     pred = model.forward(x)
 
-    print(f'{pred.shape = }')
-    print(f'{pred = }')
+    print(f"{pred.shape = }")
+    print(f"{pred = }")
 
     # assert len(x) == batch_size
     # assert len(y) == batch_size

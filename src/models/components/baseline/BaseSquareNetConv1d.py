@@ -49,20 +49,20 @@ class BaseSquareNetConv1d(pl.LightningModule):
     # ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
     def forward(self, x):
 
-        print(f'start fwd {x.shape =}')
+        print(f"start fwd {x.shape =}")
 
         b, s, c, k, f = x.size()
         x = x.view(b * s, c, k, f)
 
-        print(f'view {x.shape =}')
+        print(f"view {x.shape =}")
 
         x = self.vit.vit_extract_features(x)
 
-        print(f'vit {x.shape =}')
+        print(f"vit {x.shape =}")
 
         x = self.dimensionality_reductor(x)
 
-        print(f'dimensionality_reductor {x.shape =}')
+        print(f"dimensionality_reductor {x.shape =}")
 
         # b = self.hparams.batch_size
         s = self.hparams.seq_size

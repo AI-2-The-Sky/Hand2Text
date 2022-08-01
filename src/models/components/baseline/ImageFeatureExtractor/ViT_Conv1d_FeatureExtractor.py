@@ -2,6 +2,7 @@ import numpy as np
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
+
 # from nptyping import Float32, NDArray, Number, Shape, UInt
 from nptyping import Float32, NDArray, Number, UInt
 from torch import nn
@@ -41,9 +42,9 @@ class ViT_Conv1d_FeatureExtractor(pl.LightningModule):
         self,
         vit_feat,
     ):
-    # ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
+        # ) -> NDArray[Shape["* batch, * vocab size"], Float32]:
         # print("---VIT FORWARD---")
-        
+
         x = self.conv_1d_1(vit_feat)
         x = self.layer_1_relu(x)
         x = torch.squeeze(x, dim=2)

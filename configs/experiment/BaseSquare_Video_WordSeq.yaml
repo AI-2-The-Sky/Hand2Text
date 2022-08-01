@@ -16,7 +16,7 @@ defaults:
 # name of the run determines folder name in logs
 name: "basesquareconv1d_test"
 
-seed: 6
+seed: 16
 
 trainer:
   min_epochs: 1
@@ -33,7 +33,7 @@ model:
 #   net:
 
 datamodule:
-  batch_size: 2
+  batch_size: 3
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

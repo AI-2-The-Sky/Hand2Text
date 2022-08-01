@@ -122,7 +122,10 @@ def load_dataset(
     SUB_DIR = f"{ROOT_DIR}/data/H2T"
     FRAMES_DIR = f"{SUB_DIR}/frames"
     RAW_VIDEOS_PATH = f"{SUB_DIR}/raw_videos"
-    all_file = os.listdir(RAW_VIDEOS_PATH)
+
+    # Clem: limit dataset size for ram issues
+    all_file = os.listdir(RAW_VIDEOS_PATH)[:50]
+    
     len_all_file = len(all_file)
     labels, words = load_labels()
     data: List[FrameData] = []

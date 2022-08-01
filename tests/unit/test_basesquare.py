@@ -1,17 +1,26 @@
-from src.datamodules.iterative_how2sign_datamodule import How2SignDataModule
+import os
+import sys
+
+ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
+sys.path.insert(0, ROOT_DIR)
+
+from src.datamodules.hand2text_vit_datamodule import Hand2TextViTDataModule
+from src.models.components.baseline.BaseSquareNetConv1d import BaseSquareNetConv1d
 
 if __name__ == "__main__":
-    batch_size = 2
+    
+    batch_size = 3
+    seq_size = 2
 
-    datamodule = How2SignDataModule(batch_size=batch_size)
+    datamodule = Hand2TextViTDataModule(batch_size=batch_size)
 
     assert (
-        not datamodule.train_dataset and not datamodule.val_dataset and not datamodule.test_dataset
+        not datamodule.data_train and not datamodule.data_val and not datamodule.data_test
     )
 
     datamodule.setup()
 
-    assert datamodule.train_dataset and datamodule.val_dataset and datamodule.test_dataset
+    assert datamodule.data_train and datamodule.data_val and datamodule.data_test
 
     # assert datamodule.train_dataloader()
     # assert datamodule.val_dataloader()
@@ -21,14 +30,15 @@ if __name__ == "__main__":
 
     x, y = batch
 
-    print(x)
-    print(y)
+    print(f'{x.shape = }')
+    print(f'{y.shape = }')
 
-    print(type(x))
-    print(type(x[0]))
+    model = BaseSquareNetConv1d(batch_size=batch_size, seq_size=seq_size, k_features=10)
 
-    print(type(y))
-    print(type(y[0]))
+    pred = model.forward(x)
+
+    print(f'{pred.shape = }')
+    print(f'{pred = }')
 
     # assert len(x) == batch_size
     # assert len(y) == batch_size

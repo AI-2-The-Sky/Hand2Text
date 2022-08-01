@@ -18,19 +18,23 @@ class SignedDataset(Dataset):
         # [n_video, nb_frames, 3, 320, 240]
         self.Y = Y
         # [n_video, nb_signes, 1]
-        self.vit = vit
+        # self.vit = vit
         self.seq_size = seq_size
 
     def __len__(self):
-        return len(self.X)
+        return len(self.X) // self.seq_size
 
     def __getitem__(self, i):
-        x_idx_a = self.seq_size *  i
-        x_idx_z = self.seq_size * (i+1)
+        # print(f'[{i}]: {self.X.shape=}, {self.Y.shape=}')
+        # print(f'{self.Y =}')
+        x_idx_a = self.seq_size * i
+        x_idx_z = self.seq_size * (i + 1)
+        # print(f'[{i}]: {x_idx_a=}, {x_idx_z=}')
         batch_X = self.X[x_idx_a:x_idx_z]
-		
         batch_Y = self.Y[i]
-        return self.vit(batch_X), batch_Y
+        # print(batch_Y)
+        return batch_X, batch_Y
+
 
 class Hand2TextViTDataModule(LightningDataModule):
     def __init__(
@@ -85,9 +89,12 @@ class Hand2TextViTDataModule(LightningDataModule):
         m = len(dataset)
         print(f"{' ' * 4}{dataset_name} shape is:")
         print(f"{' ' * 4 * 2}m: {m}")
-        X, y = dataset[0]
-        print(f"{' ' * 4 * 2}X: {X.shape}")
-        print(f"{' ' * 4 * 2}Y: {y.shape}")
+        for i in range(m):
+            X, y = dataset[i]
+            print(f"{' ' * 4 * 2}X[{i}]: {X.shape}")
+            print(f"{' ' * 4 * 2}Y[{i}]: {y.shape}")
+            print(f" ")
+            break
 
     def setup(self, stage: Optional[str] = None) -> None:
         """Load data.
@@ -125,9 +132,8 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         # t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
 
-        print(t_frames[0].shape)
-        a = self.feature_extractor.vit_extract_features
-        self.dataset = SignedDataset(t_frames, t_video_signes, a, self.seq_size)
+        print(f'{t_frames[0].shape =}')
+        self.dataset = SignedDataset(t_frames, t_video_signes, self.feature_extractor.vit_extract_features, self.seq_size)
 
         self.words = words
 
@@ -136,19 +142,22 @@ class Hand2TextViTDataModule(LightningDataModule):
         train_size = len(self.dataset) - (test_size + val_size)
 
         self._print_dataset_shape("dataset", self.dataset)
+
         self.data_train, self.data_test, self.data_val = random_split(
             self.dataset,
             [train_size, test_size, val_size],
             generator=torch.Generator().manual_seed(42),
         )
-        self._print_dataset_shape("dataset_train", self.data_train)
-        self._print_dataset_shape("dataset_val", self.data_val)
-        self._print_dataset_shape("dataset_test", self.data_test)
+        # self._print_dataset_shape("dataset_train", self.data_train)
+        # self._print_dataset_shape("dataset_val", self.data_val)
+        # self._print_dataset_shape("dataset_test", self.data_test)
 
     def train_dataloader(self) -> DataLoader:
+        print("*** DATALOADER ***")
         return DataLoader(
             dataset=self.data_train,
-            batch_size=self.hparams.batch_size * self.hparams.seq_size,
+            batch_size=self.hparams.batch_size,
+            # batch_size=self.hparams.batch_size * self.hparams.seq_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=True,
@@ -157,7 +166,8 @@ class Hand2TextViTDataModule(LightningDataModule):
     def val_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.data_val,
-            batch_size=self.hparams.batch_size * self.hparams.seq_size,
+            batch_size=self.hparams.batch_size,
+            # batch_size=self.hparams.batch_size * self.hparams.seq_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=False,
@@ -166,7 +176,8 @@ class Hand2TextViTDataModule(LightningDataModule):
     def test_dataloader(self) -> DataLoader:
         return DataLoader(
             dataset=self.data_test,
-            batch_size=self.hparams.batch_size * self.hparams.seq_size,
+            batch_size=self.hparams.batch_size,
+            # batch_size=self.hparams.batch_size * self.hparams.seq_size,
             num_workers=self.hparams.num_workers,
             pin_memory=self.hparams.pin_memory,
             shuffle=False,

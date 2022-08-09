@@ -19,14 +19,16 @@ name: "basesquareconv1d_test"
 seed: 16
 
 trainer:
+  # output_dir: https://huggingface.co/spaces/dolmalin/hand2text
   min_epochs: 1
   max_epochs: 100
 #   gradient_clip_val: 0.5
 
 model:
   lr: 5e-4
-#   net:
+  # net:
 #     simple_cnn.yaml
+# output_dir: https://huggingface.co/spaces/dolmalin/hand2text
 
 #     dropout: 0.1
 # model:

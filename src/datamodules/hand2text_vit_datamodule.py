@@ -13,7 +13,7 @@ from src.models.components.baseline.ImageFeatureExtractor.ViT_Conv1d_FeatureExtr
 
 
 class SignedDataset(Dataset):
-    def __init__(self, X, Y, vit, seq_size):
+    def __init__(self, X, Y, seq_size):
         self.X = X
         # [n_video, nb_frames, 3, 320, 240]
         self.Y = Y

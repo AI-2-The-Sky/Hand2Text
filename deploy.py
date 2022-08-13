@@ -9,7 +9,7 @@ import os
 import gradio as gr
 # from src.models.BaseSquareConv1dModule import BaseSquareConv1dModule
 from torchvision.transforms import transforms
-
+from torchvision.io import read_video
 
 def set_module_requires_grad_(module, requires_grad):
     for param in module.parameters():
@@ -22,17 +22,16 @@ def freeze_all_layers_(module):
 def test(video):
     # dataset = SignedDataset(video, "Hello World!", 16)
     print(video)
-    print(video.shape)
-    t = transforms.Compose(
+    frames, audio, metadata = read_video(video, pts_unit='sec', output_format="TCHW")
+    transform = transforms.Compose(
         [
             transforms.Resize(size=(224, 224)),
-            transforms.ToTensor(),
         ]
     )
-    X = t(video)
+    X = transform(frames)
     y = "Hello World!"
     print(X.shape)
-    print(y.shape)
+    # print(y.shape)
     return "Hello World!"
 
 

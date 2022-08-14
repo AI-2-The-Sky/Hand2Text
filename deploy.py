@@ -6,8 +6,11 @@ import sys
 #     sys.path.insert(0, module_path)
 
 import os
+import numpy as np
 import gradio as gr
-# from src.models.BaseSquareConv1dModule import BaseSquareConv1dModule
+from src.models.BaseSquareConv1dModule import BaseSquareConv1dModule
+from src.models.components.baseline.BaseSquareNetConv1d import BaseSquareNetConv1d
+from infer import Infer
 from torchvision.transforms import transforms
 from torchvision.io import read_video
 
@@ -22,19 +25,20 @@ def freeze_all_layers_(module):
 def test(video):
     # dataset = SignedDataset(video, "Hello World!", 16)
     print(video)
-    frames, audio, metadata = read_video(video, pts_unit='sec', output_format="TCHW")
-    transform = transforms.Compose(
-        [
-            transforms.Resize(size=(224, 224)),
-        ]
-    )
-    X = transform(frames)
-    y = "Hello World!"
-    print(X.shape)
-    # print(y.shape)
-    return "Hello World!"
-
-
+    net = BaseSquareNetConv1d(batch_size=1, 
+                                seq_size=N, 
+                                nb_classes=1999, 
+                                h_in=10, 
+                                k_features=64
+                             )
+    model = BaseSquareConv1dModule(net=net, lr=0)
+    infer = Infer(model=model,
+                    freq=25,
+                    ckpt_path="logs/experiments/runs/basesquareconv1d_test/2022-08-10_21-31-11/checkpoints/last.ckpt"
+                 )
+    y = infer.predict(video_path=video)
+    print(y.shape)
+    return y
 
 if __name__ == "__main__":
 

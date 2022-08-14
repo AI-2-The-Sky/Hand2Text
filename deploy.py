@@ -25,13 +25,13 @@ def freeze_all_layers_(module):
 def test(video):
     # dataset = SignedDataset(video, "Hello World!", 16)
     print(video)
-    net = BaseSquareNetConv1d(batch_size=1, 
-                                seq_size=N, 
-                                nb_classes=1999, 
-                                h_in=10, 
-                                k_features=64
-                             )
-    model = BaseSquareConv1dModule(net=net, lr=0)
+    # net = BaseSquareNetConv1d(batch_size=1, 
+    #                             seq_size=25, 
+    #                             nb_classes=1999, 
+    #                             h_in=10, 
+    #                             k_features=64
+    #                          )
+    model = BaseSquareConv1dModule
     infer = Infer(model=model,
                     freq=25,
                     ckpt_path="logs/experiments/runs/basesquareconv1d_test/2022-08-10_21-31-11/checkpoints/last.ckpt"

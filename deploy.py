@@ -33,12 +33,11 @@ def test(video):
     #                          )
     model = BaseSquareConv1dModule
     infer = Infer(model=model,
-                    freq=10,
+                    freq=25,
                     ckpt_path="logs/experiments/runs/basesquareconv1d_test/2022-08-10_21-31-11/checkpoints/last.ckpt"
                  )
     y = infer.predict(video_path=video)
-    print(y.shape)
-    return y
+    return " ".join(y)
 
 if __name__ == "__main__":
 

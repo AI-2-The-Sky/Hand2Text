@@ -33,7 +33,7 @@ def test(video):
     #                          )
     model = BaseSquareConv1dModule
     infer = Infer(model=model,
-                    freq=25,
+                    freq=10,
                     ckpt_path="logs/experiments/runs/basesquareconv1d_test/2022-08-10_21-31-11/checkpoints/last.ckpt"
                  )
     y = infer.predict(video_path=video)

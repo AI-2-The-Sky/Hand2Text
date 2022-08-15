@@ -134,7 +134,7 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         print(f"{t_frames[0].shape =}")
         self.dataset = SignedDataset(
-            t_frames, t_video_signes, self.feature_extractor.vit_extract_features, self.seq_size
+            t_frames, t_video_signes, self.seq_size
         )
 
         self.words = words

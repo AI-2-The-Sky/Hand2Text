@@ -53,6 +53,7 @@ class BaseSquareConv1dModule(LightningModule):
 
     def training_epoch_end(self, outputs: List[Any]):
         # `outputs` is a list of dicts returned from `training_step()`
+        self.train_acc.reset()
         pass
 
     def validation_step(self, batch: Any, batch_idx: int):
@@ -60,7 +61,9 @@ class BaseSquareConv1dModule(LightningModule):
 
         # log val metrics
         acc = self.val_acc(preds, targets)
+		print(f"bef: val logging {acc = }")
         self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
+		print(f"aft: val logging {acc = }")
         self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
@@ -69,6 +72,7 @@ class BaseSquareConv1dModule(LightningModule):
         acc = self.val_acc.compute()  # get val accuracy from current epoch
         self.val_acc_best.update(acc)
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True)
+        self.val_acc.reset()
 
     def test_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
@@ -81,13 +85,14 @@ class BaseSquareConv1dModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def test_epoch_end(self, outputs: List[Any]):
-        pass
-
-    def on_epoch_end(self):
-        # reset metrics at the end of every epoch
-        self.train_acc.reset()
         self.test_acc.reset()
-        self.val_acc.reset()
+	
+    def on_epoch_end(self):
+        # # reset metrics at the end of every epoch
+        # self.train_acc.reset()
+        # self.test_acc.reset()
+        # self.val_acc.reset()
+        pass
 
     def configure_optimizers(self):
         """Choose what optimizers and learning-rate schedulers to use in your optimization.

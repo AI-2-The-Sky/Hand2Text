@@ -8,7 +8,7 @@ defaults:
 
 # choose metric which will be optimized by Optuna
 # make sure this is the correct name of some metric logged in lightning module!
-optimized_metric: "train/loss"
+optimized_metric: "val/loss"
 
 # here we define Optuna hyperparameter search
 # it optimizes for value returned from function with @hydra.main decorator
@@ -44,5 +44,11 @@ hydra:
     search_space:
       model.lr:
         type: float
-        low: 0.0001
-        high: 0.2
+        low: 1e-3
+        high: 1
+        log: true
+      model.weight_decay:
+        type: float
+        low: 1e-10
+        high: 1e-6
+        log: true

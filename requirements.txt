@@ -54,7 +54,7 @@ timm
 # --------- hydra --------- #
 hydra-core>=1.1.0
 hydra-colorlog>=1.1.0
-hydra-optuna-sweeper>=1.1.0
+hydra-optuna-sweeper<1.2.0
 omegaconf
 
 # ---- computer-vision ---- #

@@ -58,12 +58,11 @@ class BaseSquareConv1dModule(LightningModule):
 
     def validation_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
-
         # log val metrics
         acc = self.val_acc(preds, targets)
-		print(f"bef: val logging {acc = }")
+        print(f"bef: val logging {acc = }")
         self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-		print(f"aft: val logging {acc = }")
+        print(f"aft: val logging {acc = }")
         self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
@@ -86,7 +85,7 @@ class BaseSquareConv1dModule(LightningModule):
 
     def test_epoch_end(self, outputs: List[Any]):
         self.test_acc.reset()
-	
+    
     def on_epoch_end(self):
         # # reset metrics at the end of every epoch
         # self.train_acc.reset()

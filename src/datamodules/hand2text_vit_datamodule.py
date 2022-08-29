@@ -22,7 +22,7 @@ class SignedDataset(Dataset):
         self.seq_size = seq_size
 
     def __len__(self):
-        return len(self.X) // self.seq_size
+        return self.X.shape[0] // self.seq_size
 
     def __getitem__(self, i):
         # print(f'[{i}]: {self.X.shape=}, {self.Y.shape=}')
@@ -129,13 +129,19 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         t_video_frames = torch.cat(multi_video_frames, dim=0)
         t_video_signes = torch.cat(multi_video_signes, dim=0)
-
+        print(f"{t_video_frames.shape =}")
+        print(f"{t_video_signes.shape =}")
         # t_video_features = self.feature_extractor.vit_extract_features(t_video_frames)
-
         print(f"{t_frames[0].shape =}")
+
+        print(f"{self.seq_size =}")
         self.dataset = SignedDataset(
-            t_frames, t_video_signes, self.seq_size
+            t_video_frames, t_video_signes, self.seq_size
         )
+
+        print(f"{len(self.dataset) =}")
+        print(f"{self.dataset[0][0].shape =}")
+
 
         self.words = words
 
@@ -150,9 +156,9 @@ class Hand2TextViTDataModule(LightningDataModule):
             [train_size, test_size, val_size],
             generator=torch.Generator().manual_seed(42),
         )
-        # self._print_dataset_shape("dataset_train", self.data_train)
-        # self._print_dataset_shape("dataset_val", self.data_val)
-        # self._print_dataset_shape("dataset_test", self.data_test)
+        self._print_dataset_shape("dataset_train", self.data_train)
+        self._print_dataset_shape("dataset_val", self.data_val)
+        self._print_dataset_shape("dataset_test", self.data_test)
 
     def train_dataloader(self) -> DataLoader:
         print("*** DATALOADER ***")

@@ -46,8 +46,8 @@ class BaseSquareConv1dModule(LightningModule):
 
         # log train metrics
         acc = self.train_acc(preds, targets)
-        self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("train/loss", loss, on_step=True, on_epoch=False, prog_bar=True)
+        self.log("train/acc", acc, on_step=True, on_epoch=False, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
 
@@ -59,16 +59,16 @@ class BaseSquareConv1dModule(LightningModule):
     def validation_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
         # log val metrics
-        acc = self.val_acc(preds, targets)
-        print(f"bef: val logging {acc = }")
-        self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        print(f"aft: val logging {acc = }")
-        self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
+        self.val_acc.update(preds, targets)
+        print(f"validation step logging {loss = }")
+        self.log("val/loss", loss, on_step=True, on_epoch=False, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def validation_epoch_end(self, outputs: List[Any]):
         acc = self.val_acc.compute()  # get val accuracy from current epoch
+        print(f"validation end logging {acc = }")
+        self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
         self.val_acc_best.update(acc)
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True)
         self.val_acc.reset()

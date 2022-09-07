@@ -34,7 +34,7 @@ def test(video):
     model = BaseSquareConv1dModule
     infer = Infer(model=model,
                     freq=25,
-                    ckpt_path="logs/experiments/runs/basesquareconv1d_test/2022-08-10_21-31-11/checkpoints/last.ckpt"
+                    ckpt_path="logs/experiments/runs/basesquareconv1d_training_full/2022-09-02_12-07-08/checkpoints/last.ckpt"
                  )
     y = infer.predict(video_path=video)
     return " ".join(y)

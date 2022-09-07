@@ -124,7 +124,8 @@ def load_dataset(
     RAW_VIDEOS_PATH = f"{SUB_DIR}/raw_videos"
 
     # Clem: limit dataset size for ram issues
-    all_file = os.listdir(RAW_VIDEOS_PATH)[:50]
+    # all_file = os.listdir(RAW_VIDEOS_PATH)[:50]
+    all_file = os.listdir(RAW_VIDEOS_PATH)
     
     len_all_file = len(all_file)
     labels, words = load_labels()
@@ -161,7 +162,6 @@ def load_dataset(
         if i % 3 == 0:
             data.append(subdataset)
             subdataset = [[], []]
-    print(len(data))
     return (data, words)
 
 

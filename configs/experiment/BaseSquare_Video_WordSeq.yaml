@@ -14,7 +14,7 @@ defaults:
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-name: "basesquareconv1d_hparams_search"
+name: "basesquareconv1d_hparams_search_proxy"
 
 seed: 16
 
@@ -25,7 +25,8 @@ trainer:
 #   gradient_clip_val: 0.5
 
 model:
-  lr: 5e-4
+  lr: 0.00121
+  weight_decay: 0
   # net:
 #     simple_cnn.yaml
 # output_dir: https://huggingface.co/spaces/dolmalin/hand2text

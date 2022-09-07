@@ -107,7 +107,7 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         # Load dataset
         dataset, words = load_dataset(transform=self.transforms)
-
+        print(f"AFTER LOADT DATASET : {len(dataset) = }")
         # dataset = [
         # 	[f_1 + f_2 + f_3], [l_1 + l_2 + l_3]
         # 	[f_1 + f_2 + f_3], [l_1 + l_2 + l_3]
@@ -153,8 +153,8 @@ class Hand2TextViTDataModule(LightningDataModule):
 
         self.data_train, self.data_test, self.data_val = random_split(
             self.dataset,
-            [train_size, test_size, val_size],
-            generator=torch.Generator().manual_seed(42),
+            [train_size, test_size, val_size]
+            # generator=torch.Generator().manual_seed(42),
         )
         self._print_dataset_shape("dataset_train", self.data_train)
         self._print_dataset_shape("dataset_val", self.data_val)

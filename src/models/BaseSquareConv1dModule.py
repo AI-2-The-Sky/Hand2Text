@@ -60,14 +60,14 @@ class BaseSquareConv1dModule(LightningModule):
         loss, preds, targets = self.step(batch)
         # log val metrics
         self.val_acc.update(preds, targets)
-        print(f"validation step logging {loss = }")
+        # print(f"validation step logging {loss = }")
         self.log("val/loss", loss, on_step=True, on_epoch=False, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def validation_epoch_end(self, outputs: List[Any]):
         acc = self.val_acc.compute()  # get val accuracy from current epoch
-        print(f"validation end logging {acc = }")
+        # print(f"validation end logging {acc = }")
         self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
         self.val_acc_best.update(acc)
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True)

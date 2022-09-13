@@ -126,7 +126,7 @@ def load_dataset(
     # Clem: limit dataset size for ram issues
     # all_file = os.listdir(RAW_VIDEOS_PATH)[:50]
     all_file = os.listdir(RAW_VIDEOS_PATH)
-    
+
     len_all_file = len(all_file)
     labels, words = load_labels()
     data: List[FrameData] = []

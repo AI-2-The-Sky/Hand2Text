@@ -37,7 +37,6 @@ model:
 
 datamodule:
   batch_size: 3
-
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

@@ -85,7 +85,7 @@ class BaseSquareConv1dModule(LightningModule):
 
     def test_epoch_end(self, outputs: List[Any]):
         self.test_acc.reset()
-    
+
     def on_epoch_end(self):
         # # reset metrics at the end of every epoch
         # self.train_acc.reset()

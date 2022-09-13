@@ -50,7 +50,7 @@ class BaseSquareNetConv1d(pl.LightningModule):
     def forward(self, x):
 
         # print(f"start fwd {x.shape =}")
-        #start fwd x.shape =torch.Size([1, 2, 3, 224, 224])
+        # start fwd x.shape =torch.Size([1, 2, 3, 224, 224])
 
         b, s, c, k, f = x.size()
         x = x.view(b * s, c, k, f)

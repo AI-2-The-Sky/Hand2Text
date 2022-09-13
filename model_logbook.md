@@ -41,8 +41,10 @@
 | Value | Time (H) | Label |                   Description | State |
 | :---- | :------- | :---: | ----------------------------: | ----: |
 | 75    | 1        |  Doc  |                       Logbook |   [x] |
-| 70-80 | 4        | Model |                           ViT |   [ ] |
-| 80    | 2        | Train | Train simple cnn on one epoch |   [ ] |
+| 90    | 6        |  GPU  |                    Setup CUDA |   [ ] |
+| ?     | ?        | Data  | Upgrade datamodule randomsplit |   [ ] |
+| 60-80 | 4        |  Doc  |  Presentation to get feedbacks|   [ ] |
+| 60-70 | 8        |  Data |                    New dataset|   [ ] |
 
 
 ## Instructions

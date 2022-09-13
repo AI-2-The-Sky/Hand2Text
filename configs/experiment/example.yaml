@@ -6,7 +6,7 @@
 defaults:
   - override /datamodule: mnist.yaml
   - override /model: mnist.yaml
-  - override /callbacks: default.yaml
+  - override /callbacks: custom.yaml
   # - override /logger: null
   - override /trainer: default.yaml
 

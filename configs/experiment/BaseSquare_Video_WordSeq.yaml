@@ -2,42 +2,41 @@
 
 # to execute this experiment run:
 # python train.py experiment=example
-
 defaults:
-  - override /datamodule: vit.yaml
-  - override /model: vit.yaml
-  - override /callbacks: default.yaml
+  - override /datamodule: hand2textvit.yaml
+  - override /callbacks: custom.yaml
   - override /trainer: default.yaml
-  - override /model/net: vit.yaml
+  - override /model: BaseSquareConv1d.yaml
+  - override /model/net: BaseSquareNetConv1d.yaml
   - override /logger: many_loggers.yaml
 
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-name: "mb3_ovrft"
+name: "basesquareconv1d_hparams_search_proxy"
 
-seed: 12345
+seed: 16
 
-# trainer:
-#   min_epochs: 1
-#   max_epochs: 2
+trainer:
+  # output_dir: https://huggingface.co/spaces/dolmalin/hand2text
+  min_epochs: 1
+  max_epochs: 100
 #   gradient_clip_val: 0.5
 
-# model:
-# #   lr: 0.002
-#   net:
+model:
+  lr: 0.00121
+  weight_decay: 0
+  # net:
 #     simple_cnn.yaml
+# output_dir: https://huggingface.co/spaces/dolmalin/hand2text
 
 #     dropout: 0.1
 # model:
 #   net:
 
 datamodule:
-  batch_size: 2
-
-model:
-  lr: 0.002
+  batch_size: 3
 # logger:
 #   wandb:
 #     tags: ["fashion_mnist", "${name}"]

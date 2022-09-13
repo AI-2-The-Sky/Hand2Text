@@ -1,5 +1,5 @@
 _target_: src.models.vit_module.ViTModule
-lr: 0.001
+lr: 1e-3
 weight_decay: 0.0005
 
 defaults:

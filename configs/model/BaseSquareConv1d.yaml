@@ -1,0 +1,6 @@
+_target_: src.models.BaseSquareConv1dModule.BaseSquareConv1dModule
+lr: 5e-4
+weight_decay: 0
+
+defaults:
+  - net: BaseSquareNetConv1d

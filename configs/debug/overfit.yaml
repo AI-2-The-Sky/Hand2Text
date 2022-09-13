@@ -6,11 +6,18 @@ defaults:
   - default.yaml
 
 trainer:
-  max_epochs: 20
+  max_epochs: 50
   overfit_batches: 3
 
 callbacks:
   model_checkpoint:
-    monitor: train/acc
+    monitor: train/loss
   early_stopping:
-    monitor: train/acc
+    monitor: train/loss
+
+model:
+  weight_decay: 0
+  # net:
+  #   dropout: 0
+
+print_config: True

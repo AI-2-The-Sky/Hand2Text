@@ -47,7 +47,12 @@ class How2SignDataModule(LightningDataModule):
         self.save_hyperparameters(logger=False)
 
         # data transformations
-        self.transforms = transforms.Compose([transforms.ToTensor()])
+        self.transforms = transforms.Compose(
+            [
+                transforms.Resize(size=(224, 224)),
+                transforms.ToTensor(),
+            ]
+        )
 
         self.data_train: Optional[Dataset] = None
         self.data_val: Optional[Dataset] = None
